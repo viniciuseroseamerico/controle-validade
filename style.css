@@ -1,0 +1,444 @@
+/* ============================================= */
+/* ESTILOS GERAIS                                */
+/* ============================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* ============================================= */
+/* CARDS (CAIXAS BRANCAS)                        */
+/* ============================================= */
+
+.card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 20px 25px;
+}
+
+.card-header h2 {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.card-header p {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.card-body {
+    padding: 25px;
+}
+
+/* ============================================= */
+/* SCANNER - CAMPO DE BUSCA                      */
+/* ============================================= */
+
+.campo-busca {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.campo-busca label {
+    font-weight: bold;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.campo-busca input {
+    flex: 1;
+    padding: 16px 18px;
+    font-size: 1.2rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s;
+    font-family: monospace;
+}
+
+.campo-busca input:focus {
+    border-color: #1e3c72;
+}
+
+.btn-buscar {
+    background: #1e3c72;
+    color: white;
+    border: none;
+    padding: 16px 28px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-buscar:hover {
+    background: #2a5298;
+}
+
+/* ============================================= */
+/* RESULTADO DA BUSCA                            */
+/* ============================================= */
+
+.resultado {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border-left: 4px solid #1e3c72;
+}
+
+.resultado h3 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.resultado p {
+    margin: 8px 0;
+    color: #555;
+}
+
+.resultado .produto-info {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    border-left: 4px solid;
+}
+
+/* Cores para cada tipo de ação */
+.produto-info[data-acao="retirar"] {
+    border-left-color: #e53e3e;
+    background: #fff5f5;
+}
+
+.produto-info[data-acao="30"] {
+    border-left-color: #ed8936;
+    background: #fffaf0;
+}
+
+.produto-info[data-acao="20"] {
+    border-left-color: #ecc94b;
+    background: #fffff0;
+}
+
+.produto-info[data-acao="normal"] {
+    border-left-color: #48bb78;
+    background: #f0fff4;
+}
+
+/* Mensagem de produto não encontrado */
+.resultado .nao-encontrado {
+    color: #e53e3e;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px;
+    font-size: 1.1rem;
+}
+
+/* Formulário de cadastro */
+.form-cadastro {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+}
+
+.form-cadastro h4 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.form-cadastro input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.form-cadastro input:focus {
+    outline: none;
+    border-color: #1e3c72;
+}
+
+.btn-salvar {
+    background: #48bb78;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.btn-salvar:hover {
+    background: #38a169;
+}
+
+/* Loading */
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #1e3c72;
+    font-weight: bold;
+}
+
+/* ============================================= */
+/* RELATÓRIO                                     */
+/* ============================================= */
+
+.botoes-relatorio {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.btn-relatorio {
+    background: #48bb78;
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-relatorio:hover {
+    background: #38a169;
+}
+
+.btn-imprimir-remover {
+    background: #ed8936;
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-imprimir-remover:hover {
+    background: #dd6b20;
+}
+
+.relatorio {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    display: none;
+}
+
+.relatorio.ativo {
+    display: block;
+}
+
+/* Tabela do relatório */
+.tabela-relatorio {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.tabela-relatorio th {
+    background: #1e3c72;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+.tabela-relatorio td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+.tabela-relatorio tr:hover {
+    background: #f0f0f0;
+}
+
+/* Seções do relatório */
+.secao-relatorio {
+    margin-bottom: 30px;
+}
+
+.secao-relatorio h3 {
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.secao-vencidos h3 {
+    background: #fed7d7;
+    color: #c53030;
+}
+
+.secao-30 h3 {
+    background: #feebc8;
+    color: #dd6b20;
+}
+
+.secao-20 h3 {
+    background: #fefcbf;
+    color: #975a16;
+}
+
+/* Totais do relatório */
+.totais-relatorio {
+    margin-top: 20px;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.totais-relatorio p {
+    margin: 5px 0;
+}
+
+/* ============================================= */
+/* MENSAGENS                                     */
+/* ============================================= */
+
+.mensagem-sucesso {
+    background: #c6f6d5;
+    color: #22543d;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+    border-left: 4px solid #38a169;
+}
+
+.mensagem-erro {
+    background: #fed7d7;
+    color: #742a2a;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+    border-left: 4px solid #e53e3e;
+}
+
+/* ============================================= */
+/* RESPONSIVIDADE                                */
+/* ============================================= */
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    
+    .card-body {
+        padding: 15px;
+    }
+    
+    .campo-busca {
+        flex-direction: column;
+    }
+    
+    .campo-busca input {
+        width: 100%;
+    }
+    
+    .btn-buscar {
+        width: 100%;
+    }
+    
+    .botoes-relatorio {
+        flex-direction: column;
+    }
+    
+    .btn-relatorio, .btn-imprimir-remover {
+        width: 100%;
+    }
+    
+    .tabela-relatorio {
+        font-size: 0.8rem;
+    }
+    
+    .tabela-relatorio th,
+    .tabela-relatorio td {
+        padding: 6px 8px;
+    }
+}
+/* ============================================= */
+/* CORREÇÃO - GARANTIR QUE BOTÕES APAREÇAM      */
+/* ============================================= */
+
+.botoes-relatorio {
+    display: flex !important;
+    gap: 15px !important;
+    margin-bottom: 20px !important;
+    flex-wrap: wrap !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.btn-relatorio {
+    background: #48bb78 !important;
+    color: white !important;
+    border: none !important;
+    padding: 14px 28px !important;
+    font-size: 1rem !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    font-weight: bold !important;
+    display: inline-block !important;
+    visibility: visible !important;
+}
+
+.btn-imprimir-remover {
+    background: #ed8936 !important;
+    color: white !important;
+    border: none !important;
+    padding: 14px 28px !important;
+    font-size: 1rem !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    font-weight: bold !important;
+    display: inline-block !important;
+    visibility: visible !important;
+}
+
+/* Garantir que o card do relatório aparece */
+.card.relatorio {
+    display: block !important;
+    visibility: visible !important;
+}
+
+.card-body {
+    display: block !important;
+    visibility: visible !important;
+}
