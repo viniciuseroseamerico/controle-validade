@@ -410,21 +410,21 @@ async function imprimirERemoverVencidos() {
         }
     }
     
-    // Atualizar relatório na tela
+    // Mostrar alerta de quantos foram removidos
+    alert(`✅ ${removidos} produto(s) vencido(s) foram removidos do sistema!`);
+    
+    // Gerar o relatório atualizado
     await gerarRelatorio();
     
-    // Mostrar mensagem de confirmação
-    const mensagemDiv = document.createElement('div');
-    mensagemDiv.className = 'mensagem-sucesso';
-    mensagemDiv.innerHTML = `✅ ${removidos} produto(s) vencido(s) foram removidos do sistema!`;
-    relatorioDiv.appendChild(mensagemDiv);
-    
-    // 🔧 CORREÇÃO: Abrir janela de impressão com o relatório atualizado
+    // 🔧 CORREÇÃO: Aguardar um pouco e abrir a impressão diretamente
     setTimeout(() => {
-        const conteudo = relatorioDiv.cloneNode(true);
-        // Remover mensagens temporárias da impressão
-        const mensagens = conteudo.querySelectorAll('.mensagem-sucesso');
-        mensagens.forEach(msg => msg.remove());
+        // Pegar o conteúdo do relatório
+        const conteudo = document.querySelector('.relatorio-container');
+        
+        if (!conteudo) {
+            alert('Erro: Relatório não encontrado para imprimir');
+            return;
+        }
         
         const janela = window.open('', '_blank');
         janela.document.write(`
@@ -445,13 +445,13 @@ async function imprimirERemoverVencidos() {
                 </style>
             </head>
             <body>
-                ${conteudo.innerHTML}
+                ${conteudo.outerHTML}
             </body>
             </html>
         `);
         janela.document.close();
         janela.print();
-    }, 500);
+    }, 1000);
 }
 // =============================================
 // EVENTOS
