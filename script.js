@@ -390,7 +390,7 @@ async function imprimirERemoverVencidos() {
         return;
     }
     
-    const confirmar = confirm(`⚠️ ATENÇÃO! ${vencidos.length} produto(s) vencido(s) serão removidos do sistema. Continuar?`);
+    const confirmar = confirm(`⚠️ ATENÇÃO! ${vencidos.length} produto(s) vencido(s) serão removidos. Continuar?`);
     
     if (!confirmar) return;
     
@@ -410,24 +410,24 @@ async function imprimirERemoverVencidos() {
         }
     }
     
-    // Mostrar alerta de quantos foram removidos
-    alert(`✅ ${removidos} produto(s) vencido(s) foram removidos do sistema!`);
+    alert(`✅ ${removidos} produto(s) removidos!`);
     
-    // Gerar o relatório atualizado
+    // Gerar relatório atualizado na tela
     await gerarRelatorio();
     
-    // 🔧 CORREÇÃO: Aguardar um pouco e abrir a impressão diretamente
+    // 🔧 VERSÃO SIMPLIFICADA DA IMPRESSÃO
     setTimeout(() => {
-        // Pegar o conteúdo do relatório
-        const conteudo = document.querySelector('.relatorio-container');
+        // Pegar todo o conteúdo do relatório
+        const relatorioContent = document.getElementById('relatorio');
         
-        if (!conteudo) {
-            alert('Erro: Relatório não encontrado para imprimir');
+        if (!relatorioContent || !relatorioContent.innerHTML) {
+            alert('Erro: Relatório não encontrado');
             return;
         }
         
-        const janela = window.open('', '_blank');
-        janela.document.write(`
+        // Criar uma nova janela para impressão
+        const win = window.open();
+        win.document.write(`
             <html>
             <head>
                 <title>Relatório de Validade</title>
@@ -445,12 +445,14 @@ async function imprimirERemoverVencidos() {
                 </style>
             </head>
             <body>
-                ${conteudo.outerHTML}
+                ${relatorioContent.innerHTML}
             </body>
             </html>
         `);
-        janela.document.close();
-        janela.print();
+        win.document.close();
+        
+        // Forçar a impressão
+        win.print();
     }, 1000);
 }
 // =============================================
