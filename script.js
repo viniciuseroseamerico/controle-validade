@@ -415,25 +415,27 @@ async function imprimirERemoverVencidos() {
     // Gerar relatório atualizado
     await gerarRelatorio();
     
-    // 🔧 VERSÃO ALTERNATIVA: Criar um link de impressão
+    // 🔧 IMPRESSÃO SIMPLIFICADA - SEM POP-UP BLOQUEADO
     setTimeout(() => {
+        // Pegar o conteúdo do relatório
         const relatorioContent = document.getElementById('relatorio');
         
         if (!relatorioContent || !relatorioContent.innerHTML) {
-            alert('Erro: Relatório não encontrado');
+            alert('Relatório vazio!');
             return;
         }
         
-        // Criar um elemento temporário para impressão
-        const printFrame = document.createElement('iframe');
-        printFrame.style.position = 'absolute';
-        printFrame.style.width = '0';
-        printFrame.style.height = '0';
-        printFrame.style.border = '0';
-        document.body.appendChild(printFrame);
+        // Criar um iframe escondido para imprimir
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'absolute';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = 'none';
+        document.body.appendChild(iframe);
         
-        const frameDoc = printFrame.contentWindow.document;
-        frameDoc.write(`
+        const iframeDoc = iframe.contentWindow.document;
+        iframeDoc.open();
+        iframeDoc.write(`
             <html>
             <head>
                 <title>Relatório de Validade</title>
@@ -455,14 +457,14 @@ async function imprimirERemoverVencidos() {
             </body>
             </html>
         `);
-        frameDoc.close();
+        iframeDoc.close();
         
-        // Imprimir o iframe
-        printFrame.contentWindow.print();
+        // Chamar a impressão
+        iframe.contentWindow.print();
         
-        // Remover o iframe após a impressão
+        // Remover o iframe depois de imprimir
         setTimeout(() => {
-            document.body.removeChild(printFrame);
+            document.body.removeChild(iframe);
         }, 1000);
     }, 1000);
 }
