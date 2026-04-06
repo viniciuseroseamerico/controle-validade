@@ -302,18 +302,48 @@ body {
 }
 
 .secao-vencidos h3 {
-    background: #fed7d7;
-    color: #c53030;
+    background: #c53030;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
 }
 
 .secao-30 h3 {
-    background: #feebc8;
-    color: #dd6b20;
+    background: #dd6b20;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
 }
 
 .secao-20 h3 {
-    background: #fefcbf;
-    color: #975a16;
+    background: #b7791f;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+/* Cores da tabela para melhor contraste */
+.tabela-relatorio th {
+    background: #1e3c72;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+/* Destaque para linhas de vencidos */
+.secao-vencidos .tabela-relatorio tr {
+    background: #fff5f5;
+}
+
+.secao-30 .tabela-relatorio tr {
+    background: #fffaf0;
+}
+
+.secao-20 .tabela-relatorio tr {
+    background: #fffff0;
 }
 
 /* Totais do relatório */
