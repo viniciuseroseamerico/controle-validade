@@ -412,12 +412,11 @@ async function imprimirERemoverVencidos() {
     
     alert(`✅ ${removidos} produto(s) removidos!`);
     
-    // Gerar relatório atualizado na tela
+    // Gerar relatório atualizado
     await gerarRelatorio();
     
-    // 🔧 VERSÃO SIMPLIFICADA DA IMPRESSÃO
+    // 🔧 VERSÃO ALTERNATIVA: Criar um link de impressão
     setTimeout(() => {
-        // Pegar todo o conteúdo do relatório
         const relatorioContent = document.getElementById('relatorio');
         
         if (!relatorioContent || !relatorioContent.innerHTML) {
@@ -425,9 +424,16 @@ async function imprimirERemoverVencidos() {
             return;
         }
         
-        // Criar uma nova janela para impressão
-        const win = window.open();
-        win.document.write(`
+        // Criar um elemento temporário para impressão
+        const printFrame = document.createElement('iframe');
+        printFrame.style.position = 'absolute';
+        printFrame.style.width = '0';
+        printFrame.style.height = '0';
+        printFrame.style.border = '0';
+        document.body.appendChild(printFrame);
+        
+        const frameDoc = printFrame.contentWindow.document;
+        frameDoc.write(`
             <html>
             <head>
                 <title>Relatório de Validade</title>
@@ -449,10 +455,15 @@ async function imprimirERemoverVencidos() {
             </body>
             </html>
         `);
-        win.document.close();
+        frameDoc.close();
         
-        // Forçar a impressão
-        win.print();
+        // Imprimir o iframe
+        printFrame.contentWindow.print();
+        
+        // Remover o iframe após a impressão
+        setTimeout(() => {
+            document.body.removeChild(printFrame);
+        }, 1000);
     }, 1000);
 }
 // =============================================
