@@ -84,9 +84,16 @@ async function buscarProduto(ean) {
             mostrarProdutos(produtos, ean);
         }
         
+        // 🔄 NOVO: Limpar o campo e focar para o próximo escaneamento
+        codigoInput.value = '';
+        codigoInput.focus();
+        
     } catch (error) {
         loadingDiv.style.display = 'none';
         mostrarMensagem(`Erro ao buscar produto: ${error.message}`, 'erro');
+        // Mesmo com erro, limpa o campo
+        codigoInput.value = '';
+        codigoInput.focus();
     }
 }
 
