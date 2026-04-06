@@ -375,6 +375,7 @@ async function gerarRelatorio() {
 }
 
 async function imprimirERemoverVencidos() {
+    // Buscar produtos vencidos
     const response = await fetch(`${SUPABASE_URL}/rest/v1/produtos_validade?validade=lt.${new Date().toISOString().split('T')[0]}`, {
         headers: {
             'apikey': SUPABASE_KEY,
@@ -393,6 +394,7 @@ async function imprimirERemoverVencidos() {
     
     if (!confirmar) return;
     
+    // Remover produtos vencidos
     let removidos = 0;
     for (const produto of vencidos) {
         const deleteResponse = await fetch(`${SUPABASE_URL}/rest/v1/produtos_validade?id=eq.${produto.id}`, {
@@ -408,22 +410,49 @@ async function imprimirERemoverVencidos() {
         }
     }
     
+    // Atualizar relatório na tela
     await gerarRelatorio();
     
-    relatorioDiv.innerHTML += `
-        <div class="mensagem-sucesso">
-            ✅ ${removidos} produto(s) vencido(s) foram removidos do sistema!
-        </div>
-    `;
+    // Mostrar mensagem de confirmação
+    const mensagemDiv = document.createElement('div');
+    mensagemDiv.className = 'mensagem-sucesso';
+    mensagemDiv.innerHTML = `✅ ${removidos} produto(s) vencido(s) foram removidos do sistema!`;
+    relatorioDiv.appendChild(mensagemDiv);
     
+    // 🔧 CORREÇÃO: Abrir janela de impressão com o relatório atualizado
     setTimeout(() => {
+        const conteudo = relatorioDiv.cloneNode(true);
+        // Remover mensagens temporárias da impressão
+        const mensagens = conteudo.querySelectorAll('.mensagem-sucesso');
+        mensagens.forEach(msg => msg.remove());
+        
         const janela = window.open('', '_blank');
-        janela.document.write('<html><head><title>Relatório de Validade</title><style>body{font-family:Arial;margin:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#1e3c72;color:white}</style></head><body>' + relatorioDiv.innerHTML + '</body></html>');
+        janela.document.write(`
+            <html>
+            <head>
+                <title>Relatório de Validade</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 20px; }
+                    table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+                    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                    th { background: #1e3c72; color: white; }
+                    .secao-vencidos h3 { background: #c53030; color: white; padding: 10px; }
+                    .secao-30 h3 { background: #dd6b20; color: white; padding: 10px; }
+                    .secao-20 h3 { background: #b7791f; color: white; padding: 10px; }
+                    @media print {
+                        button { display: none; }
+                    }
+                </style>
+            </head>
+            <body>
+                ${conteudo.innerHTML}
+            </body>
+            </html>
+        `);
         janela.document.close();
-        setTimeout(() => janela.print(), 500);
+        janela.print();
     }, 500);
 }
-
 // =============================================
 // EVENTOS
 // =============================================
