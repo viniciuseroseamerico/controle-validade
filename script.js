@@ -485,7 +485,51 @@ codigoInput.addEventListener('keypress', (e) => {
         if (ean) {
             buscarProduto(ean);
         }
+   // FUNÇÃO DE TESTE - IMPRESSÃO DIRETA
+function testarImpressao() {
+    const relatorioContent = document.getElementById('relatorio');
+    
+    if (!relatorioContent) {
+        alert('Elemento relatorio não encontrado!');
+        return;
     }
+    
+    if (!relatorioContent.innerHTML || relatorioContent.innerHTML.trim() === '') {
+        alert('Relatório está vazio! Gere o relatório primeiro.');
+        return;
+    }
+    
+    alert('Preparando impressão...'); // Teste 1
+    
+    const win = window.open();
+    
+    if (!win) {
+        alert('Pop-up bloqueado! Permita pop-ups para este site.');
+        return;
+    }
+    
+    alert('Janela aberta!'); // Teste 2
+    
+    win.document.write(`
+        <html>
+        <head>
+            <title>Teste de Impressão</title>
+        </head>
+        <body>
+            <h1>Teste</h1>
+            <p>Se você está vendo isso, a janela funcionou!</p>
+            ${relatorioContent.innerHTML}
+        </body>
+        </html>
+    `);
+    win.document.close();
+    
+    alert('Conteúdo escrito!'); // Teste 3
+    
+    win.print();
+    
+    alert('Print chamado!'); // Teste 4
+} }
 });
 
 gerarRelatorioBtn.addEventListener('click', gerarRelatorio);
