@@ -387,6 +387,11 @@ async function imprimirERemoverVencidos() {
     
     if (vencidos.length === 0) {
         alert('✅ Não há produtos vencidos para remover!');
+        // Mesmo sem vencidos, permite imprimir o relatório atual
+        const relatorioContent = document.getElementById('relatorio');
+        if (relatorioContent && relatorioContent.innerHTML) {
+            abrirJanelaImpressao(relatorioContent.innerHTML);
+        }
         return;
     }
     
@@ -415,58 +420,101 @@ async function imprimirERemoverVencidos() {
     // Gerar relatório atualizado
     await gerarRelatorio();
     
-    // 🔧 IMPRESSÃO SIMPLIFICADA - SEM POP-UP BLOQUEADO
+    // Abrir impressão
     setTimeout(() => {
-        // Pegar o conteúdo do relatório
         const relatorioContent = document.getElementById('relatorio');
-        
-        if (!relatorioContent || !relatorioContent.innerHTML) {
-            alert('Relatório vazio!');
-            return;
+        if (relatorioContent && relatorioContent.innerHTML) {
+            abrirJanelaImpressao(relatorioContent.innerHTML);
+        } else {
+            alert('Erro: Relatório não encontrado para imprimir');
         }
-        
-        // Criar um iframe escondido para imprimir
-        const iframe = document.createElement('iframe');
-        iframe.style.position = 'absolute';
-        iframe.style.width = '0';
-        iframe.style.height = '0';
-        iframe.style.border = 'none';
-        document.body.appendChild(iframe);
-        
-        const iframeDoc = iframe.contentWindow.document;
-        iframeDoc.open();
-        iframeDoc.write(`
-            <html>
-            <head>
-                <title>Relatório de Validade</title>
-                <style>
-                    body { font-family: Arial, sans-serif; margin: 20px; }
-                    table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-                    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                    th { background: #1e3c72; color: white; }
-                    .secao-vencidos h3 { background: #c53030; color: white; padding: 10px; }
-                    .secao-30 h3 { background: #dd6b20; color: white; padding: 10px; }
-                    .secao-20 h3 { background: #b7791f; color: white; padding: 10px; }
-                    @media print {
-                        button { display: none; }
-                    }
-                </style>
-            </head>
-            <body>
-                ${relatorioContent.innerHTML}
-            </body>
-            </html>
-        `);
-        iframeDoc.close();
-        
-        // Chamar a impressão
-        iframe.contentWindow.print();
-        
-        // Remover o iframe depois de imprimir
-        setTimeout(() => {
-            document.body.removeChild(iframe);
-        }, 1000);
     }, 1000);
+}
+
+// Função separada para abrir janela de impressão
+function abrirJanelaImpressao(conteudoHTML) {
+    const janela = window.open('', '_blank', 'width=800,height=600,menubar=yes,toolbar=yes');
+    
+    if (!janela) {
+        alert('Pop-up bloqueado! Por favor, permita pop-ups para este site e tente novamente.');
+        return;
+    }
+    
+    janela.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Relatório de Validade</title>
+            <meta charset="UTF-8">
+            <style>
+                body { 
+                    font-family: Arial, Helvetica, sans-serif; 
+                    margin: 20px; 
+                    font-size: 12px;
+                }
+                table { 
+                    width: 100%; 
+                    border-collapse: collapse; 
+                    margin: 15px 0; 
+                }
+                th, td { 
+                    border: 1px solid #ccc; 
+                    padding: 8px; 
+                    text-align: left; 
+                    vertical-align: top;
+                }
+                th { 
+                    background: #1e3c72; 
+                    color: white; 
+                    font-weight: bold;
+                }
+                td {
+                    color: #333;
+                }
+                .secao-vencidos h3 { 
+                    background: #c53030; 
+                    color: white; 
+                    padding: 10px; 
+                    margin-top: 20px;
+                }
+                .secao-30 h3 { 
+                    background: #dd6b20; 
+                    color: white; 
+                    padding: 10px; 
+                    margin-top: 20px;
+                }
+                .secao-20 h3 { 
+                    background: #b7791f; 
+                    color: white; 
+                    padding: 10px; 
+                    margin-top: 20px;
+                }
+                h2 {
+                    color: #1e3c72;
+                    text-align: center;
+                }
+                @media print {
+                    body { margin: 0; padding: 10px; }
+                    button { display: none; }
+                }
+            </style>
+        </head>
+        <body>
+            ${conteudoHTML}
+            <script>
+                window.onload = function() {
+                    setTimeout(function() {
+                        window.print();
+                        setTimeout(function() {
+                            window.close();
+                        }, 500);
+                    }, 500);
+                };
+            <\/script>
+        </body>
+        </html>
+    `);
+    janela.document.close();
 }
 // =============================================
 // EVENTOS
