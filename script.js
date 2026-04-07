@@ -328,7 +328,7 @@ async function gerarRelatorio() {
                     <td>${p.eam}</td>
                     <td>${p.descricao}</td>
                     <td>${formatarDataBR(p.validade)}</td>
-                    <td style="color:red">${Math.abs(p.dias)} dias</td>
+                    <td>${Math.abs(p.dias)} dias</td>
                 </tr>`;
             });
             html += `</table></div>`;
@@ -344,7 +344,7 @@ async function gerarRelatorio() {
                     <td>${p.eam}</td>
                     <td>${p.descricao}</td>
                     <td>${formatarDataBR(p.validade)}</td>
-                    <td style="color:#ed8936">${p.dias} dias</td>
+                   <td>${p.dias} dias</td>
                 </tr>`;
             });
             html += `</table></div>`;
@@ -360,7 +360,7 @@ async function gerarRelatorio() {
                     <td>${p.eam}</td>
                     <td>${p.descricao}</td>
                     <td>${formatarDataBR(p.validade)}</td>
-                    <td style="color:#ecc94b">${p.dias} dias</td>
+                   <td>${p.dias} dias</td>
                 </tr>`;
             });
             html += `</table></div>`;
