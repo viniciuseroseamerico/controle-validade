@@ -532,7 +532,6 @@ setTimeout(() => {
 
 // Função separada para abrir janela de impressão
 function abrirJanelaImpressao(conteudoHTML) {
-    // Forçar que o conteúdo seja capturado do elemento atual
     const relatorioElement = document.getElementById('relatorio');
     
     if (!relatorioElement) {
@@ -540,15 +539,12 @@ function abrirJanelaImpressao(conteudoHTML) {
         return;
     }
     
-    // Pegar o HTML atualizado do relatório (não o que veio por parâmetro)
     const htmlParaImprimir = relatorioElement.innerHTML;
     
     if (!htmlParaImprimir || htmlParaImprimir.trim() === '') {
         alert('Erro: Relatório está vazio! Gere o relatório novamente.');
         return;
     }
-    
-    console.log('Conteúdo a imprimir:', htmlParaImprimir.length, 'caracteres');
     
     const janela = window.open('', '_blank', 'width=800,height=600,menubar=yes,toolbar=yes');
     
@@ -564,84 +560,25 @@ function abrirJanelaImpressao(conteudoHTML) {
             <title>Relatório de Validade</title>
             <meta charset="UTF-8">
             <style>
-                body { 
-                    font-family: Arial, Helvetica, sans-serif; 
-                    margin: 20px; 
-                    font-size: 12px;
-                }
-                table { 
-                    width: 100%; 
-                    border-collapse: collapse; 
-                    margin: 15px 0; 
-                }
-                th, td { 
-                    border: 1px solid #ccc; 
-                    padding: 8px; 
-                    text-align: left; 
-                    vertical-align: top;
-                }
-                th { 
-                    background: #1e3c72; 
-                    color: white; 
-                    font-weight: bold;
-                }
-                td {
-                    color: #333;
-                }
-                .secao-vencidos h3 { 
-                    background: #c53030; 
-                    color: white; 
-                    padding: 10px; 
-                    margin-top: 20px;
-                }
-                .secao-30 h3 { 
-                    background: #dd6b20; 
-                    color: white; 
-                    padding: 10px; 
-                    margin-top: 20px;
-                }
-                .secao-20 h3 { 
-                    background: #b7791f; 
-                    color: white; 
-                    padding: 10px; 
-                    margin-top: 20px;
-                }
-                h2 {
-                    color: #1e3c72;
-                    text-align: center;
-                }
-                .grafico-pizza {
-                    margin: 20px auto;
-                    text-align: center;
-                    max-width: 300px;
-                    page-break-inside: avoid;
-                }
-                .grafico-pizza div[style*="conic-gradient"] {
-                    width: 200px;
-                    height: 200px;
-                    margin: 0 auto;
-                    border-radius: 50%;
-                }
-                @media print {
-                    body { margin: 0; padding: 10px; }
-                    button { display: none; }
-                    .grafico-pizza {
-                        page-break-inside: avoid;
-                    }
-                }
+                body { font-family: Arial, sans-serif; margin: 20px; font-size: 12px; }
+                table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+                th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+                th { background: #1e3c72; color: white; }
+                td { color: #333; }
+                .secao-vencidos h3 { background: #c53030; color: white; padding: 10px; margin-top: 20px; }
+                .secao-30 h3 { background: #dd6b20; color: white; padding: 10px; margin-top: 20px; }
+                .secao-20 h3 { background: #b7791f; color: white; padding: 10px; margin-top: 20px; }
+                h2 { color: #1e3c72; text-align: center; }
+                .grafico-pizza { margin: 20px auto; text-align: center; max-width: 300px; }
+                .grafico-pizza div { width: 200px; height: 200px; margin: 0 auto; border-radius: 50%; }
+                @media print { body { margin: 0; padding: 10px; } button { display: none; } }
             </style>
         </head>
         <body>
             ${htmlParaImprimir}
             <script>
                 window.onload = function() {
-                    console.log('Janela de impressão carregada');
-                    setTimeout(function() {
-                        window.print();
-                        setTimeout(function() {
-                            window.close();
-                        }, 500);
-                    }, 500);
+                    setTimeout(function() { window.print(); setTimeout(function() { window.close(); }, 500); }, 500);
                 };
             <\/script>
         </body>
