@@ -376,63 +376,27 @@ async function gerarRelatorio() {
 
 async function imprimirERemoverVencidos() {
     // Buscar produtos vencidos
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/produtos_validade?validade=lt.${new Date().toISOString().split('T')[0]}`, {
-        headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`
-        }
-    });
+   // Função separada para abrir janela de impressão
+function abrirJanelaImpressao(conteudoHTML) {
+    // Forçar que o conteúdo seja capturado do elemento atual
+    const relatorioElement = document.getElementById('relatorio');
     
-    const vencidos = await response.json();
-    
-    if (vencidos.length === 0) {
-        alert('✅ Não há produtos vencidos para remover!');
-        // Mesmo sem vencidos, permite imprimir o relatório atual
-        const relatorioContent = document.getElementById('relatorio');
-        if (relatorioContent && relatorioContent.innerHTML) {
-            abrirJanelaImpressao(relatorioContent.innerHTML);
-        }
+    if (!relatorioElement) {
+        alert('Erro: Relatório não encontrado!');
         return;
     }
     
-    const confirmar = confirm(`⚠️ ATENÇÃO! ${vencidos.length} produto(s) vencido(s) serão removidos. Continuar?`);
+    // Pegar o HTML atualizado do relatório (não o que veio por parâmetro)
+    const htmlParaImprimir = relatorioElement.innerHTML;
     
-    if (!confirmar) return;
-    
-    // Remover produtos vencidos
-    let removidos = 0;
-    for (const produto of vencidos) {
-        const deleteResponse = await fetch(`${SUPABASE_URL}/rest/v1/produtos_validade?id=eq.${produto.id}`, {
-            method: 'DELETE',
-            headers: {
-                'apikey': SUPABASE_KEY,
-                'Authorization': `Bearer ${SUPABASE_KEY}`
-            }
-        });
-        
-        if (deleteResponse.ok) {
-            removidos++;
-        }
+    if (!htmlParaImprimir || htmlParaImprimir.trim() === '') {
+        alert('Erro: Relatório está vazio! Gere o relatório novamente.');
+        return;
     }
     
-    alert(`✅ ${removidos} produto(s) removidos!`);
+    // Mostrar quantos caracteres vai imprimir (para debug)
+    console.log('Conteúdo a imprimir:', htmlParaImprimir.length, 'caracteres');
     
-    // Gerar relatório atualizado
-    await gerarRelatorio();
-    
-    // Abrir impressão
-    setTimeout(() => {
-        const relatorioContent = document.getElementById('relatorio');
-        if (relatorioContent && relatorioContent.innerHTML) {
-            abrirJanelaImpressao(relatorioContent.innerHTML);
-        } else {
-            alert('Erro: Relatório não encontrado para imprimir');
-        }
-    }, 1000);
-}
-
-// Função separada para abrir janela de impressão
-function abrirJanelaImpressao(conteudoHTML) {
     const janela = window.open('', '_blank', 'width=800,height=600,menubar=yes,toolbar=yes');
     
     if (!janela) {
@@ -500,9 +464,164 @@ function abrirJanelaImpressao(conteudoHTML) {
             </style>
         </head>
         <body>
-            ${conteudoHTML}
+            ${htmlParaImprimir}
             <script>
                 window.onload = function() {
+                    console.log('Janela de impressão carregada');
+                    setTimeout(function() {
+                        window.print();
+                        setTimeout(function() {
+                            window.close();
+                        }, 500);
+                    }, 500);
+                };
+            <\/script>
+        </body>
+        </html>
+    `);
+    janela.document.close();
+}
+    
+    const vencidos = await response.json();
+    
+    if (vencidos.length === 0) {
+        alert('✅ Não há produtos vencidos para remover!');
+        // Mesmo sem vencidos, permite imprimir o relatório atual
+        const relatorioContent = document.getElementById('relatorio');
+        if (relatorioContent && relatorioContent.innerHTML) {
+            abrirJanelaImpressao(relatorioContent.innerHTML);
+        }
+        return;
+    }
+    
+    const confirmar = confirm(`⚠️ ATENÇÃO! ${vencidos.length} produto(s) vencido(s) serão removidos. Continuar?`);
+    
+    if (!confirmar) return;
+    
+    // Remover produtos vencidos
+    let removidos = 0;
+    for (const produto of vencidos) {
+        const deleteResponse = await fetch(`${SUPABASE_URL}/rest/v1/produtos_validade?id=eq.${produto.id}`, {
+            method: 'DELETE',
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`
+            }
+        });
+        
+        if (deleteResponse.ok) {
+            removidos++;
+        }
+    }
+    
+    alert(`✅ ${removidos} produto(s) removidos!`);
+    
+    // Gerar relatório atualizado
+    await gerarRelatorio();
+    
+   // Abrir impressão
+setTimeout(() => {
+    const relatorioContent = document.getElementById('relatorio');
+    if (relatorioContent && relatorioContent.innerHTML) {
+        abrirJanelaImpressao(relatorioContent.innerHTML);
+    } else {
+        alert('Erro: Relatório não encontrado para imprimir');
+    }
+}, 1000);
+}
+
+// Função separada para abrir janela de impressão
+function abrirJanelaImpressao(conteudoHTML) {
+    // Forçar que o conteúdo seja capturado do elemento atual
+    const relatorioElement = document.getElementById('relatorio');
+    
+    if (!relatorioElement) {
+        alert('Erro: Relatório não encontrado!');
+        return;
+    }
+    
+    // Pegar o HTML atualizado do relatório (não o que veio por parâmetro)
+    const htmlParaImprimir = relatorioElement.innerHTML;
+    
+    if (!htmlParaImprimir || htmlParaImprimir.trim() === '') {
+        alert('Erro: Relatório está vazio! Gere o relatório novamente.');
+        return;
+    }
+    
+    // Mostrar quantos caracteres vai imprimir (para debug)
+    console.log('Conteúdo a imprimir:', htmlParaImprimir.length, 'caracteres');
+    
+    const janela = window.open('', '_blank', 'width=800,height=600,menubar=yes,toolbar=yes');
+    
+    if (!janela) {
+        alert('Pop-up bloqueado! Por favor, permita pop-ups para este site e tente novamente.');
+        return;
+    }
+    
+    janela.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Relatório de Validade</title>
+            <meta charset="UTF-8">
+            <style>
+                body { 
+                    font-family: Arial, Helvetica, sans-serif; 
+                    margin: 20px; 
+                    font-size: 12px;
+                }
+                table { 
+                    width: 100%; 
+                    border-collapse: collapse; 
+                    margin: 15px 0; 
+                }
+                th, td { 
+                    border: 1px solid #ccc; 
+                    padding: 8px; 
+                    text-align: left; 
+                    vertical-align: top;
+                }
+                th { 
+                    background: #1e3c72; 
+                    color: white; 
+                    font-weight: bold;
+                }
+                td {
+                    color: #333;
+                }
+                .secao-vencidos h3 { 
+                    background: #c53030; 
+                    color: white; 
+                    padding: 10px; 
+                    margin-top: 20px;
+                }
+                .secao-30 h3 { 
+                    background: #dd6b20; 
+                    color: white; 
+                    padding: 10px; 
+                    margin-top: 20px;
+                }
+                .secao-20 h3 { 
+                    background: #b7791f; 
+                    color: white; 
+                    padding: 10px; 
+                    margin-top: 20px;
+                }
+                h2 {
+                    color: #1e3c72;
+                    text-align: center;
+                }
+                @media print {
+                    body { margin: 0; padding: 10px; }
+                    button { display: none; }
+                }
+            </style>
+        </head>
+        <body>
+            ${htmlParaImprimir}
+            <script>
+                window.onload = function() {
+                    console.log('Janela de impressão carregada');
                     setTimeout(function() {
                         window.print();
                         setTimeout(function() {
