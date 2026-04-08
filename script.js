@@ -548,7 +548,6 @@ function abrirJanelaImpressao(conteudoHTML) {
         return;
     }
     
-    // Mostrar quantos caracteres vai imprimir (para debug)
     console.log('Conteúdo a imprimir:', htmlParaImprimir.length, 'caracteres');
     
     const janela = window.open('', '_blank', 'width=800,height=600,menubar=yes,toolbar=yes');
@@ -611,9 +610,24 @@ function abrirJanelaImpressao(conteudoHTML) {
                     color: #1e3c72;
                     text-align: center;
                 }
+                .grafico-pizza {
+                    margin: 20px auto;
+                    text-align: center;
+                    max-width: 300px;
+                    page-break-inside: avoid;
+                }
+                .grafico-pizza div[style*="conic-gradient"] {
+                    width: 200px;
+                    height: 200px;
+                    margin: 0 auto;
+                    border-radius: 50%;
+                }
                 @media print {
                     body { margin: 0; padding: 10px; }
                     button { display: none; }
+                    .grafico-pizza {
+                        page-break-inside: avoid;
+                    }
                 }
             </style>
         </head>
