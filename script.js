@@ -302,21 +302,21 @@ async function gerarRelatorio() {
                 <p><strong>Data de geração:</strong> ${new Date().toLocaleDateString('pt-BR')}</p>
                 <p><strong>Total de produtos:</strong> ${total}</p>
                 
-                <div class="grafico-pizza" style="margin: 20px 0; text-align: center;">
-                    <div style="display: inline-block; width: 200px; height: 200px; border-radius: 50%; background: conic-gradient(
-                        #e53e3e 0% ${percentualVencidos}%,
-                        #ed8936 ${percentualVencidos}% ${parseFloat(percentualVencidos) + parseFloat(percentual30)}%,
-                        #ecc94b ${parseFloat(percentualVencidos) + parseFloat(percentual30)}% ${parseFloat(percentualVencidos) + parseFloat(percentual30) + parseFloat(percentual20)}%,
-                        #48bb78 ${parseFloat(percentualVencidos) + parseFloat(percentual30) + parseFloat(percentual20)}% 100%
-                    );"></div>
-                    <div style="margin-top: 15px;">
-                        <p><span style="color:#e53e3e">🔴</span> Vencidos: ${percentualVencidos}%</p>
-                        <p><span style="color:#ed8936">🟠</span> 30% OFF: ${percentual30}%</p>
-                        <p><span style="color:#ecc94b">🟡</span> 20% OFF: ${percentual20}%</p>
-                    </div>
-                </div>
-                <hr>
-        `;
+                <div class="grafico-pizza" style="margin: 20px auto; text-align: center; max-width: 300px;">
+    <div style="width: 200px; height: 200px; margin: 0 auto; border-radius: 50%; background: conic-gradient(
+        #e53e3e 0% ${percentualVencidos}%,
+        #ed8936 ${percentualVencidos}% ${parseFloat(percentualVencidos) + parseFloat(percentual30)}%,
+        #ecc94b ${parseFloat(percentualVencidos) + parseFloat(percentual30)}% ${parseFloat(percentualVencidos) + parseFloat(percentual30) + parseFloat(percentual20)}%,
+        #48bb78 ${parseFloat(percentualVencidos) + parseFloat(percentual30) + parseFloat(percentual20)}% 100%
+    );"></div>
+    <div style="margin-top: 15px; text-align: center;">
+        <p><span style="display:inline-block;width:12px;height:12px;background:#e53e3e;border-radius:50%;"></span> Vencidos: ${percentualVencidos}%</p>
+        <p><span style="display:inline-block;width:12px;height:12px;background:#ed8936;border-radius:50%;"></span> 30% OFF: ${percentual30}%</p>
+        <p><span style="display:inline-block;width:12px;height:12px;background:#ecc94b;border-radius:50%;"></span> 20% OFF: ${percentual20}%</p>
+        <p><span style="display:inline-block;width:12px;height:12px;background:#48bb78;border-radius:50%;"></span> Normal: ${(100 - parseFloat(percentualVencidos) - parseFloat(percentual30) - parseFloat(percentual20)).toFixed(1)}%</p>
+    </div>
+</div>
+<hr>
         
         if (vencidos.length > 0) {
             html += `<div class="secao-relatorio secao-vencidos">
