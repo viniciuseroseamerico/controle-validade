@@ -129,32 +129,82 @@ async function gerarRelatorio() {
     const vencidos = produtos.filter(p => calcularDiasRestantes(p.validade) < 0);
     const p30 = produtos.filter(p => { const d = calcularDiasRestantes(p.validade); return d > 0 && d <= 60; });
     const p20 = produtos.filter(p => { const d = calcularDiasRestantes(p.validade); return d > 60 && d <= 90; });
-    const normais = produtos.filter(p => { const d = calcularDiasRestantes(p.validade); return d > 90; });
     
-    let html = `<h2>📊 RELATÓRIO</h2><p>Total: ${produtos.length}</p><hr>`;
+    let html = `<h2 style="text-align:center;">📊 RELATÓRIO DE VALIDADE</h2>
+                <p><strong>Data:</strong> ${new Date().toLocaleDateString('pt-BR')}</p>
+                <p><strong>Total de produtos:</strong> ${produtos.length}</p>
+                <hr>`;
     
-    html += `<div><h3 style="background:#c53030;color:white;padding:10px;">🔴 VENCIDOS</h3>`;
+    html += `<div style="margin-bottom: 20px;">
+                <h3 style="background:#c53030; color:white; padding:10px;">🔴 PRODUTOS VENCIDOS</h3>`;
     if (vencidos.length) {
-        html += `<table border="1" style="width:100%;border-collapse:collapse;"><tr style="background:#1e3c72;color:white;"><th>EAN</th><th>Descrição</th><th>Validade</th><th>Dias</th></tr>`;
-        vencidos.forEach(p => html += `<tr><td>${p.eam}</td><td>${p.descricao}</td><td>${formatarDataBR(p.validade)}</td><td>${Math.abs(calcularDiasRestantes(p.validade))}</td></tr>`);
+        html += `<table style="width:100%; border-collapse:collapse; margin-top:10px;">
+                    <tr style="background:#1e3c72; color:white;">
+                        <th style="border:1px solid #ccc; padding:8px;">EAN</th>
+                        <th style="border:1px solid #ccc; padding:8px;">Descrição</th>
+                        <th style="border:1px solid #ccc; padding:8px;">Validade</th>
+                        <th style="border:1px solid #ccc; padding:8px;">Dias</th>
+                    </tr>`;
+        vencidos.forEach(p => {
+            html += `<tr>
+                        <td style="border:1px solid #ccc; padding:8px;">${p.eam}</td>
+                        <td style="border:1px solid #ccc; padding:8px;">${p.descricao}</td>
+                        <td style="border:1px solid #ccc; padding:8px;">${formatarDataBR(p.validade)}</td>
+                        <td style="border:1px solid #ccc; padding:8px;">${Math.abs(calcularDiasRestantes(p.validade))} dias</td>
+                    </tr>`;
+        });
         html += `</table>`;
-    } else html += `<p>✅ Nenhum</p>`;
+    } else {
+        html += `<p>✅ Nenhum produto vencido</p>`;
+    }
     html += `</div>`;
     
-    html += `<div><h3 style="background:#dd6b20;color:white;padding:10px;">🟠 30% OFF</h3>`;
+    html += `<div style="margin-bottom: 20px;">
+                <h3 style="background:#dd6b20; color:white; padding:10px;">🟠 PRODUTOS 30% DESCONTO (até 60 dias)</h3>`;
     if (p30.length) {
-        html += `<table border="1" style="width:100%;border-collapse:collapse;"><tr style="background:#1e3c72;color:white;"><th>EAN</th><th>Descrição</th><th>Validade</th><th>Dias</th></tr>`;
-        p30.forEach(p => html += `<tr><td>${p.eam}</td><td>${p.descricao}</td><td>${formatarDataBR(p.validade)}</td><td>${calcularDiasRestantes(p.validade)}</td></tr>`);
+        html += `<table style="width:100%; border-collapse:collapse; margin-top:10px;">
+                    <tr style="background:#1e3c72; color:white;">
+                        <th style="border:1px solid #ccc; padding:8px;">EAN</th>
+                        <th style="border:1px solid #ccc; padding:8px;">Descrição</th>
+                        <th style="border:1px solid #ccc; padding:8px;">Validade</th>
+                        <th style="border:1px solid #ccc; padding:8px;">Dias</th>
+                    </tr>`;
+        p30.forEach(p => {
+            html += `<tr>
+                        <td style="border:1px solid #ccc; padding:8px;">${p.eam}</td>
+                        <td style="border:1px solid #ccc; padding:8px;">${p.descricao}</td>
+                        <td style="border:1px solid #ccc; padding:8px;">${formatarDataBR(p.validade)}</td>
+                        <td style="border:1px solid #ccc; padding:8px;">${calcularDiasRestantes(p.validade)} dias</td>
+                    </tr>`;
+        });
         html += `</table>`;
-    } else html += `<p>✅ Nenhum</p>`;
+    } else {
+        html += `<p>✅ Nenhum produto com 30% de desconto</p>`;
+    }
     html += `</div>`;
     
-    html += `<div><h3 style="background:#b7791f;color:white;padding:10px;">🟡 20% OFF</h3>`;
+    html += `<div style="margin-bottom: 20px;">
+                <h3 style="background:#b7791f; color:white; padding:10px;">🟡 PRODUTOS 20% DESCONTO (61 a 90 dias)</h3>`;
     if (p20.length) {
-        html += `<table border="1" style="width:100%;border-collapse:collapse;"><tr style="background:#1e3c72;color:white;"><th>EAN</th><th>Descrição</th><th>Validade</th><th>Dias</th></tr>`;
-        p20.forEach(p => html += `<tr><td>${p.eam}</td><td>${p.descricao}</td><td>${formatarDataBR(p.validade)}</td><td>${calcularDiasRestantes(p.validade)}</td></tr>`);
+        html += `<table style="width:100%; border-collapse:collapse; margin-top:10px;">
+                    <tr style="background:#1e3c72; color:white;">
+                        <th style="border:1px solid #ccc; padding:8px;">EAN</th>
+                        <th style="border:1px solid #ccc; padding:8px;">Descrição</th>
+                        <th style="border:1px solid #ccc; padding:8px;">Validade</th>
+                        <th style="border:1px solid #ccc; padding:8px;">Dias</th>
+                    </tr>`;
+        p20.forEach(p => {
+            html += `<tr>
+                        <td style="border:1px solid #ccc; padding:8px;">${p.eam}</td>
+                        <td style="border:1px solid #ccc; padding:8px;">${p.descricao}</td>
+                        <td style="border:1px solid #ccc; padding:8px;">${formatarDataBR(p.validade)}</td>
+                        <td style="border:1px solid #ccc; padding:8px;">${calcularDiasRestantes(p.validade)} dias</td>
+                    </tr>`;
+        });
         html += `</table>`;
-    } else html += `<p>✅ Nenhum</p>`;
+    } else {
+        html += `<p>✅ Nenhum produto com 20% de desconto</p>`;
+    }
     html += `</div>`;
     
     relatorioDiv.innerHTML = html;
@@ -172,40 +222,103 @@ async function imprimirRelatorio() {
     const p20 = produtos.filter(p => { const d = calcularDiasRestantes(p.validade); return d > 60 && d <= 90; });
     
     if (vencidos.length > 0) {
-        if (!confirm(`${vencidos.length} vencido(s) serão removidos. Continuar?`)) return;
+        if (!confirm(`${vencidos.length} produto(s) vencido(s) serão removidos. Continuar?`)) return;
         for (const p of vencidos) {
             await fetch(`${SUPABASE_URL}/rest/v1/produtos_validade?id=eq.${p.id}`, {
                 method: 'DELETE',
                 headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
             });
         }
+        alert(`${vencidos.length} produto(s) removidos!`);
     }
     
-    let html = `<h2>📊 RELATÓRIO</h2><p>Data: ${new Date().toLocaleDateString()}</p><p>Total: ${produtos.length}</p><hr>`;
+    let html = `<h2 style="text-align:center;">📊 RELATÓRIO DE VALIDADE</h2>
+                <p><strong>Data:</strong> ${new Date().toLocaleDateString('pt-BR')}</p>
+                <p><strong>Total de produtos:</strong> ${produtos.length}</p>
+                <hr>`;
     
-    html += `<div><h3>🔴 VENCIDOS</h3>`;
+    html += `<div style="margin-bottom: 20px;">
+                <h3 style="background:#c53030; color:white; padding:10px;">🔴 PRODUTOS VENCIDOS</h3>`;
     if (vencidos.length) {
-        html += `<table border="1"><tr><th>EAN</th><th>Descrição</th><th>Validade</th><th>Dias</th></tr>`;
-        vencidos.forEach(p => html += `<tr><td>${p.eam}</td><td>${p.descricao}</td><td>${formatarDataBR(p.validade)}</td><td>${Math.abs(calcularDiasRestantes(p.validade))}</td></tr>`);
+        html += `<table style="width:100%; border-collapse:collapse;">
+                    <tr style="background:#1e3c72; color:white;">
+                        <th style="border:1px solid #ccc; padding:8px;">EAN</th>
+                        <th style="border:1px solid #ccc; padding:8px;">Descrição</th>
+                        <th style="border:1px solid #ccc; padding:8px;">Validade</th>
+                        <th style="border:1px solid #ccc; padding:8px;">Dias</th>
+                    </tr>`;
+        vencidos.forEach(p => {
+            html += `<tr>
+                        <td style="border:1px solid #ccc; padding:8px;">${p.eam}</td>
+                        <td style="border:1px solid #ccc; padding:8px;">${p.descricao}</td>
+                        <td style="border:1px solid #ccc; padding:8px;">${formatarDataBR(p.validade)}</td>
+                        <td style="border:1px solid #ccc; padding:8px;">${Math.abs(calcularDiasRestantes(p.validade))} dias</td>
+                    </tr>`;
+        });
         html += `</table>`;
-    } else html += `<p>✅ Nenhum</p></div>`;
+    } else {
+        html += `<p>✅ Nenhum produto vencido</p>`;
+    }
+    html += `</div>`;
     
-    html += `<div><h3>🟠 30% OFF</h3>`;
+    html += `<div style="margin-bottom: 20px;">
+                <h3 style="background:#dd6b20; color:white; padding:10px;">🟠 PRODUTOS 30% DESCONTO (até 60 dias)</h3>`;
     if (p30.length) {
-        html += `<table border="1"><tr><th>EAN</th><th>Descrição</th><th>Validade</th><th>Dias</th></tr>`;
-        p30.forEach(p => html += `<tr><td>${p.eam}</td><td>${p.descricao}</td><td>${formatarDataBR(p.validade)}</td><td>${calcularDiasRestantes(p.validade)}</td></tr>`);
+        html += `<table style="width:100%; border-collapse:collapse;">
+                    <tr style="background:#1e3c72; color:white;">
+                        <th style="border:1px solid #ccc; padding:8px;">EAN</th>
+                        <th style="border:1px solid #ccc; padding:8px;">Descrição</th>
+                        <th style="border:1px solid #ccc; padding:8px;">Validade</th>
+                        <th style="border:1px solid #ccc; padding:8px;">Dias</th>
+                    </tr>`;
+        p30.forEach(p => {
+            html += `<tr>
+                        <td style="border:1px solid #ccc; padding:8px;">${p.eam}</td>
+                        <td style="border:1px solid #ccc; padding:8px;">${p.descricao}</td>
+                        <td style="border:1px solid #ccc; padding:8px;">${formatarDataBR(p.validade)}</td>
+                        <td style="border:1px solid #ccc; padding:8px;">${calcularDiasRestantes(p.validade)} dias</td>
+                    </tr>`;
+        });
         html += `</table>`;
-    } else html += `<p>✅ Nenhum</p></div>`;
+    } else {
+        html += `<p>✅ Nenhum produto com 30% de desconto</p>`;
+    }
+    html += `</div>`;
     
-    html += `<div><h3>🟡 20% OFF</h3>`;
+    html += `<div style="margin-bottom: 20px;">
+                <h3 style="background:#b7791f; color:white; padding:10px;">🟡 PRODUTOS 20% DESCONTO (61 a 90 dias)</h3>`;
     if (p20.length) {
-        html += `<table border="1"><tr><th>EAN</th><th>Descrição</th><th>Validade</th><th>Dias</th></tr>`;
-        p20.forEach(p => html += `<tr><td>${p.eam}</td><td>${p.descricao}</td><td>${formatarDataBR(p.validade)}</td><td>${calcularDiasRestantes(p.validade)}</td></tr>`);
+        html += `<table style="width:100%; border-collapse:collapse;">
+                    <tr style="background:#1e3c72; color:white;">
+                        <th style="border:1px solid #ccc; padding:8px;">EAN</th>
+                        <th style="border:1px solid #ccc; padding:8px;">Descrição</th>
+                        <th style="border:1px solid #ccc; padding:8px;">Validade</th>
+                        <th style="border:1px solid #ccc; padding:8px;">Dias</th>
+                    </tr>`;
+        p20.forEach(p => {
+            html += `<tr>
+                        <td style="border:1px solid #ccc; padding:8px;">${p.eam}</td>
+                        <td style="border:1px solid #ccc; padding:8px;">${p.descricao}</td>
+                        <td style="border:1px solid #ccc; padding:8px;">${formatarDataBR(p.validade)}</td>
+                        <td style="border:1px solid #ccc; padding:8px;">${calcularDiasRestantes(p.validade)} dias</td>
+                    </tr>`;
+        });
         html += `</table>`;
-    } else html += `<p>✅ Nenhum</p></div>`;
+    } else {
+        html += `<p>✅ Nenhum produto com 20% de desconto</p>`;
+    }
+    html += `</div>`;
     
     const win = window.open('', '_blank');
-    win.document.write(`<html><head><title>Relatório</title><style>body{font-family:Arial;margin:20px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:8px}th{background:#1e3c72;color:white}</style></head><body>${html}<script>window.onload=()=>{setTimeout(()=>window.print(),500)}<\/script></body></html>`);
+    if (!win) { alert('Pop-up bloqueado! Permita pop-ups.'); return; }
+    win.document.write(`<html><head><title>Relatório de Validade</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+            @media print { body { margin: 0; padding: 10px; } }
+        </style>
+    </head><body>${html}<script>window.onload = () => { setTimeout(() => window.print(), 500); }<\/script></body></html>`);
     win.document.close();
 }
 
