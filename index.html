@@ -56,4 +56,62 @@
     
     <script src="script.js"></script>
 </body>
+</html><!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Validade</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        
+        <!-- SCANNER -->
+        <div class="card scanner">
+            <div class="card-header">
+                <h2>🔍 CONTROLE VALIDADE</h2>
+                <p>Escaneie o código de barras para consultar ou cadastrar</p>
+            </div>
+            
+            <div class="card-body">
+                <div class="campo-busca">
+                    <label for="codigo">📷 Código de Barras (EAN):</label>
+                    <input type="text" id="codigo" placeholder="Escaneie ou digite o código..." autofocus>
+                    <button id="buscarBtn" class="btn-buscar">🔍 Buscar</button>
+                </div>
+                
+                <div id="loading" class="loading" style="display: none;">
+                    ⏳ Buscando produto...
+                </div>
+                
+                <div id="resultado" class="resultado">
+                    <!-- Resultado aparece aqui -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- RELATÓRIO -->
+        <div class="card relatorio">
+            <div class="card-header">
+                <h2>📊 RELATÓRIO MENSAL</h2>
+                <p>Clique no botão abaixo para gerar o relatório com TODOS os produtos</p>
+            </div>
+            
+            <div class="card-body">
+                <div class="botoes-relatorio">
+                    <button id="gerarRelatorioBtn" class="btn-relatorio">📄 Gerar Relatório</button>
+                    <button id="imprimirRemoverBtn" class="btn-imprimir-remover">🖨️ Imprimir e Remover Vencidos</button>
+                </div>
+                
+                <div id="relatorio" class="relatorio">
+                    <!-- Relatório aparece aqui -->
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+    <script src="script.js"></script>
+</body>
 </html>
