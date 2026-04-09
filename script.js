@@ -217,99 +217,117 @@ async function buscarProduto(ean) {
         codigoInput.focus();
     }
 }
-
 // =============================================
-// FUNÇÃO GERAR RELATÓRIO
+// FUNÇÃO GERAR RELATÓRIO (com gráfico de pizza)
 // =============================================
-async function gerarRelatorio() {
+window.gerarRelatorio = async function() {
     relatorioDiv.innerHTML = '<div class="loading">⏳ Gerando relatório...</div>';
-    relatorioDiv.style.display = 'block';
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/produtos_validade?select=*`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    const produtos = await response.json();
     
-    try {
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/produtos_validade?select=*`, {
-            headers: {
-                'apikey': SUPABASE_KEY,
-                'Authorization': `Bearer ${SUPABASE_KEY}`
-            }
+    // Separar produtos por categoria
+    const vencidos = produtos.filter(p => calcularDiasRestantes(p.validade) < 0);
+    const p30 = produtos.filter(p => { const d = calcularDiasRestantes(p.validade); return d > 0 && d <= 60; });
+    const p20 = produtos.filter(p => { const d = calcularDiasRestantes(p.validade); return d > 60 && d <= 90; });
+    const normais = produtos.filter(p => { const d = calcularDiasRestantes(p.validade); return d > 90; });
+    
+    const total = produtos.length;
+    const percentualVencidos = total > 0 ? ((vencidos.length / total) * 100).toFixed(1) : 0;
+    const percentual30 = total > 0 ? ((p30.length / total) * 100).toFixed(1) : 0;
+    const percentual20 = total > 0 ? ((p20.length / total) * 100).toFixed(1) : 0;
+    const percentualNormal = total > 0 ? ((normais.length / total) * 100).toFixed(1) : 0;
+    
+    let html = `
+        <div class="relatorio-container">
+            <h2>📊 RELATÓRIO DE VALIDADE</h2>
+            <p><strong>Data:</strong> ${new Date().toLocaleDateString('pt-BR')}</p>
+            <p><strong>Total de produtos:</strong> ${total}</p>
+            <hr>
+            
+            <!-- GRÁFICO DE PIZZA -->
+            <div class="grafico-pizza" style="margin: 20px auto; text-align: center; max-width: 300px;">
+                <div style="width: 200px; height: 200px; margin: 0 auto; border-radius: 50%; background: conic-gradient(
+                    #c53030 0% ${percentualVencidos}%,
+                    #dd6b20 ${percentualVencidos}% ${parseFloat(percentualVencidos) + parseFloat(percentual30)}%,
+                    #b7791f ${parseFloat(percentualVencidos) + parseFloat(percentual30)}% ${parseFloat(percentualVencidos) + parseFloat(percentual30) + parseFloat(percentual20)}%,
+                    #48bb78 ${parseFloat(percentualVencidos) + parseFloat(percentual30) + parseFloat(percentual20)}% 100%
+                );"></div>
+                <div style="margin-top: 15px;">
+                    <p><span style="display:inline-block;width:12px;height:12px;background:#c53030;border-radius:50%;"></span> Vencidos: ${percentualVencidos}%</p>
+                    <p><span style="display:inline-block;width:12px;height:12px;background:#dd6b20;border-radius:50%;"></span> 30% OFF: ${percentual30}%</p>
+                    <p><span style="display:inline-block;width:12px;height:12px;background:#b7791f;border-radius:50%;"></span> 20% OFF: ${percentual20}%</p>
+                    <p><span style="display:inline-block;width:12px;height:12px;background:#48bb78;border-radius:50%;"></span> Normal: ${percentualNormal}%</p>
+                </div>
+            </div>
+            <hr>
+    `;
+    
+    // Vencidos
+    html += `<div class="secao-vencidos"><h3>🔴 PRODUTOS VENCIDOS (RETIRAR)</h3>`;
+    if (vencidos.length > 0) {
+        html += `<table class="tabela-relatorio"><tr><th>EAN</th><th>Descrição</th><th>Validade</th><th>Dias</th></tr>`;
+        vencidos.forEach(p => {
+            html += `<tr>
+                <td>${p.eam}</td>
+                <td>${p.descricao}</td>
+                <td>${formatarDataBR(p.validade)}</td>
+                <td>${Math.abs(calcularDiasRestantes(p.validade))} dias</td>
+            </tr>`;
         });
-        
-        const produtos = await response.json();
-        
-        if (produtos.length === 0) {
-            relatorioDiv.innerHTML = '<p>Nenhum produto cadastrado.</p>';
-            return;
-        }
-        
-        const vencidos = [];
-        const promocao30 = [];
-        const promocao20 = [];
-        
-        produtos.forEach(produto => {
-            const dias = calcularDiasRestantes(produto.validade);
-            if (dias < 0) {
-                vencidos.push(produto);
-            } else if (dias <= 60) {
-                promocao30.push(produto);
-            } else if (dias <= 90) {
-                promocao20.push(produto);
-            }
-        });
-        
-        let html = `
-            <div class="relatorio-container">
-                <h2>📊 RELATÓRIO DE VALIDADE</h2>
-                <p><strong>Data:</strong> ${new Date().toLocaleDateString('pt-BR')}</p>
-                <p><strong>Total de produtos:</strong> ${produtos.length}</p>
-                <hr>
-        `;
-        
-        // Vencidos
-        html += `<div class="secao-vencidos"><h3>🔴 PRODUTOS VENCIDOS (RETIRAR)</h3>`;
-        if (vencidos.length > 0) {
-            html += `<table class="tabela-relatorio"><tr><th>EAN</th><th>Descrição</th><th>Validade</th><th>Dias</th></tr>`;
-            vencidos.forEach(p => {
-                html += `<tr><td>${p.eam}</td><td>${p.descricao}</td><td>${formatarDataBR(p.validade)}</td><td>${Math.abs(calcularDiasRestantes(p.validade))}</td></tr>`;
-            });
-            html += `</table>`;
-        } else {
-            html += `<p>✅ Nenhum produto vencido</p>`;
-        }
-        html += `</div>`;
-        
-        // 30%
-        html += `<div class="secao-30"><h3>🟠 PRODUTOS 30% DESCONTO</h3>`;
-        if (promocao30.length > 0) {
-            html += `<table class="tabela-relatorio"><tr><th>EAN</th><th>Descrição</th><th>Validade</th><th>Dias</th></tr>`;
-            promocao30.forEach(p => {
-                html += `<tr><td>${p.eam}</td><td>${p.descricao}</td><td>${formatarDataBR(p.validade)}</td><td>${calcularDiasRestantes(p.validade)}</td></tr>`;
-            });
-            html += `</table>`;
-        } else {
-            html += `<p>✅ Nenhum produto com 30%</p>`;
-        }
-        html += `</div>`;
-        
-        // 20%
-        html += `<div class="secao-20"><h3>🟡 PRODUTOS 20% DESCONTO</h3>`;
-        if (promocao20.length > 0) {
-            html += `<table class="tabela-relatorio"><tr><th>EAN</th><th>Descrição</th><th>Validade</th><th>Dias</th></tr>`;
-            promocao20.forEach(p => {
-                html += `<tr><td>${p.eam}</td><td>${p.descricao}</td><td>${formatarDataBR(p.validade)}</td><td>${calcularDiasRestantes(p.validade)}</td></tr>`;
-            });
-            html += `</table>`;
-        } else {
-            html += `<p>✅ Nenhum produto com 20%</p>`;
-        }
-        html += `</div>`;
-        
-        html += `</div>`;
-        relatorioDiv.innerHTML = html;
-        
-    } catch (error) {
-        relatorioDiv.innerHTML = `<div class="mensagem-erro">Erro: ${error.message}</div>`;
+        html += `</table>`;
+    } else {
+        html += `<p>✅ Nenhum produto vencido</p>`;
     }
-}
-
+    html += `</div>`;
+    
+    // 30%
+    html += `<div class="secao-30"><h3>🟠 PRODUTOS 30% DESCONTO (até 60 dias)</h3>`;
+    if (p30.length > 0) {
+        html += `<table class="tabela-relatorio"><tr><th>EAN</th><th>Descrição</th><th>Validade</th><th>Dias</th></tr>`;
+        p30.forEach(p => {
+            html += `<tr>
+                <td>${p.eam}</td>
+                <td>${p.descricao}</td>
+                <td>${formatarDataBR(p.validade)}</td>
+                <td>${calcularDiasRestantes(p.validade)} dias</td>
+            </tr>`;
+        });
+        html += `</table>`;
+    } else {
+        html += `<p>✅ Nenhum produto com 30% de desconto</p>`;
+    }
+    html += `</div>`;
+    
+    // 20%
+    html += `<div class="secao-20"><h3>🟡 PRODUTOS 20% DESCONTO (61 a 90 dias)</h3>`;
+    if (p20.length > 0) {
+        html += `<table class="tabela-relatorio"><tr><th>EAN</th><th>Descrição</th><th>Validade</th><th>Dias</th></tr>`;
+        p20.forEach(p => {
+            html += `<tr>
+                <td>${p.eam}</td>
+                <td>${p.descricao}</td>
+                <td>${formatarDataBR(p.validade)}</td>
+                <td>${calcularDiasRestantes(p.validade)} dias</td>
+            </tr>`;
+        });
+        html += `</table>`;
+    } else {
+        html += `<p>✅ Nenhum produto com 20% de desconto</p>`;
+    }
+    html += `</div>`;
+    
+    // Normais (opcional)
+    if (normais.length > 0) {
+        html += `<div class="secao-normal"><h3>🟢 PRODUTOS NORMAIS (acima de 90 dias)</h3>`;
+        html += `<p>${normais.length} produtos com validade acima de 90 dias</p>`;
+        html += `</div>`;
+    }
+    
+    html += `</div>`;
+    relatorioDiv.innerHTML = html;
+};
 // =============================================
 // FUNÇÃO IMPRIMIR
 // =============================================
@@ -335,6 +353,9 @@ function abrirJanelaImpressao() {
                 .secao-vencidos h3 { background: #c53030; color: white; padding: 10px; }
                 .secao-30 h3 { background: #dd6b20; color: white; padding: 10px; }
                 .secao-20 h3 { background: #b7791f; color: white; padding: 10px; }
+                .secao-normal h3 { background: #48bb78; color: white; padding: 10px; }
+                .grafico-pizza { text-align: center; margin: 20px auto; }
+                .grafico-pizza div[style*="conic-gradient"] { margin: 0 auto; }
                 @media print { button { display: none; } }
             </style>
         </head>
@@ -343,7 +364,6 @@ function abrirJanelaImpressao() {
     `);
     win.document.close();
 }
-
 async function imprimirERemoverVencidos() {
     const response = await fetch(`${SUPABASE_URL}/rest/v1/produtos_validade?validade=lt.${new Date().toISOString().split('T')[0]}`, {
         headers: {
