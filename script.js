@@ -268,22 +268,169 @@
             </div>`;
         }
         
-        // Abrir janela de impressão
-        const win = window.open('', '_blank');
-        if (!win) { alert('Pop-up bloqueado! Permita pop-ups para este site.'); return; }
+       // IMPRIMIR RELATÓRIO (COM GRÁFICO DE BARRAS COLORIDAS)
+window.imprimirRelatorio = async function() {
+    // Buscar dados
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/produtos_validade?select=*`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    
+    const produtos = await response.json();
+    
+    if (produtos.length === 0) {
+        alert('Nenhum produto cadastrado!');
+        return;
+    }
+    
+    // Separar produtos por categoria
+    const vencidos = produtos.filter(p => calcularDiasRestantes(p.validade) < 0);
+    const p30 = produtos.filter(p => { const d = calcularDiasRestantes(p.validade); return d > 0 && d <= 60; });
+    const p20 = produtos.filter(p => { const d = calcularDiasRestantes(p.validade); return d > 60 && d <= 90; });
+    const normais = produtos.filter(p => { const d = calcularDiasRestantes(p.validade); return d > 90; });
+    
+    const total = produtos.length;
+    const percentualVencidos = total > 0 ? ((vencidos.length / total) * 100).toFixed(1) : 0;
+    const percentual30 = total > 0 ? ((p30.length / total) * 100).toFixed(1) : 0;
+    const percentual20 = total > 0 ? ((p20.length / total) * 100).toFixed(1) : 0;
+    const percentualNormal = total > 0 ? ((normais.length / total) * 100).toFixed(1) : 0;
+    
+    // Verificar se há vencidos para remover
+    if (vencidos.length > 0) {
+        if (!confirm(`${vencidos.length} produto(s) vencido(s) serão removidos. Continuar?`)) return;
+        for (const p of vencidos) {
+            await fetch(`${SUPABASE_URL}/rest/v1/produtos_validade?id=eq.${p.id}`, {
+                method: 'DELETE',
+                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+            });
+        }
+        alert(`${vencidos.length} produto(s) removidos!`);
+    }
+    
+    // Gerar HTML do relatório com gráfico de barras simples
+    let html = `
+        <h2 style="text-align:center;">📊 RELATÓRIO DE VALIDADE</h2>
+        <p><strong>Data:</strong> ${new Date().toLocaleDateString('pt-BR')}</p>
+        <p><strong>Total de produtos:</strong> ${total}</p>
+        <hr>
         
-        win.document.write(`<html><head><title>Relatório de Validade</title>
-            <style>
-                body { font-family: Arial, sans-serif; margin: 20px; }
-                table { width: 100%; border-collapse: collapse; }
-                th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-                @media print {
-                    button { display: none; }
-                }
-            </style>
-        </head><body>${html}<script>window.onload = () => { setTimeout(() => window.print(), 500); }<\/script></body></html>`);
-        win.document.close();
-    };
+        <!-- GRÁFICO DE BARRAS COLORIDAS -->
+        <div style="margin: 20px auto; max-width: 400px;">
+            <h3 style="text-align:center;">📈 Resumo por Ação</h3>
+            <div style="background:#c53030; height:30px; width:${percentualVencidos}%; color:white; padding:5px; margin:2px 0;">
+                🔴 Vencidos: ${percentualVencidos}%
+            </div>
+            <div style="background:#dd6b20; height:30px; width:${percentual30}%; color:white; padding:5px; margin:2px 0;">
+                🟠 30% OFF: ${percentual30}%
+            </div>
+            <div style="background:#b7791f; height:30px; width:${percentual20}%; color:white; padding:5px; margin:2px 0;">
+                🟡 20% OFF: ${percentual20}%
+            </div>
+            <div style="background:#48bb78; height:30px; width:${percentualNormal}%; color:white; padding:5px; margin:2px 0;">
+                🟢 Normal: ${percentualNormal}%
+            </div>
+        </div>
+        <hr>
+    `;
+    
+    // Tabela Vencidos
+    html += `<div style="margin-bottom: 30px;">
+        <h3 style="background:#c53030; color:white; padding:10px;">🔴 PRODUTOS VENCIDOS (RETIRADOS)</h3>`;
+    if (vencidos.length > 0) {
+        html += `<table style="width:100%; border-collapse:collapse;">
+            <thead><tr style="background:#1e3c72; color:white;">
+                <th style="border:1px solid #ccc; padding:8px;">EAN</th>
+                <th style="border:1px solid #ccc; padding:8px;">Descrição</th>
+                <th style="border:1px solid #ccc; padding:8px;">Validade</th>
+                <th style="border:1px solid #ccc; padding:8px;">Dias Vencido</th>
+            </tr></thead><tbody>`;
+        vencidos.forEach(p => {
+            html += `<tr>
+                <td style="border:1px solid #ccc; padding:8px;">${p.eam}</td>
+                <td style="border:1px solid #ccc; padding:8px;">${p.descricao}</td>
+                <td style="border:1px solid #ccc; padding:8px;">${formatarDataBR(p.validade)}</td
+                <td style="border:1px solid #ccc; padding:8px;">${Math.abs(calcularDiasRestantes(p.validade))} dias</td
+            </tr>`;
+        });
+        html += `</tbody></table>`;
+    } else {
+        html += `<p>✅ Nenhum produto vencido</p>`;
+    }
+    html += `</div>`;
+    
+    // Tabela 30%
+    html += `<div style="margin-bottom: 30px;">
+        <h3 style="background:#dd6b20; color:white; padding:10px;">🟠 PRODUTOS 30% DESCONTO (até 60 dias)</h3>`;
+    if (p30.length > 0) {
+        html += `<table style="width:100%; border-collapse:collapse;">
+            <thead><tr style="background:#1e3c72; color:white;">
+                <th style="border:1px solid #ccc; padding:8px;">EAN</th>
+                <th style="border:1px solid #ccc; padding:8px;">Descrição</th>
+                <th style="border:1px solid #ccc; padding:8px;">Validade</th>
+                <th style="border:1px solid #ccc; padding:8px;">Dias Restantes</th>
+            </tr></thead><tbody>`;
+        p30.forEach(p => {
+            html += `<tr>
+                <td style="border:1px solid #ccc; padding:8px;">${p.eam}</td>
+                <td style="border:1px solid #ccc; padding:8px;">${p.descricao}</td>
+                <td style="border:1px solid #ccc; padding:8px;">${formatarDataBR(p.validade)}</td
+                <td style="border:1px solid #ccc; padding:8px;">${calcularDiasRestantes(p.validade)} dias</td
+            </tr>`;
+        });
+        html += `</tbody></tr>`;
+    } else {
+        html += `<p>✅ Nenhum produto com 30% de desconto</p>`;
+    }
+    html += `</div>`;
+    
+    // Tabela 20%
+    html += `<div style="margin-bottom: 30px;">
+        <h3 style="background:#b7791f; color:white; padding:10px;">🟡 PRODUTOS 20% DESCONTO (61 a 90 dias)</h3>`;
+    if (p20.length > 0) {
+        html += `<table style="width:100%; border-collapse:collapse;">
+            <thead><tr style="background:#1e3c72; color:white;">
+                <th style="border:1px solid #ccc; padding:8px;">EAN</th>
+                <th style="border:1px solid #ccc; padding:8px;">Descrição</th>
+                <th style="border:1px solid #ccc; padding:8px;">Validade</th>
+                <th style="border:1px solid #ccc; padding:8px;">Dias Restantes</th>
+            <tr></thead><tbody>`;
+        p20.forEach(p => {
+            html += `<tr>
+                <td style="border:1px solid #ccc; padding:8px;">${p.eam}</td>
+                <td style="border:1px solid #ccc; padding:8px;">${p.descricao}</td>
+                <td style="border:1px solid #ccc; padding:8px;">${formatarDataBR(p.validade)}</td
+                <td style="border:1px solid #ccc; padding:8px;">${calcularDiasRestantes(p.validade)} dias</td
+            </tr>`;
+        });
+        html += `</tbody></table>`;
+    } else {
+        html += `<p>✅ Nenhum produto com 20% de desconto</p>`;
+    }
+    html += `</div>`;
+    
+    // Normais
+    if (normais.length > 0) {
+        html += `<div>
+            <h3 style="background:#48bb78; color:white; padding:10px;">🟢 PRODUTOS NORMAIS (acima de 90 dias)</h3>
+            <p>${normais.length} produtos com validade acima de 90 dias</p>
+        </div>`;
+    }
+    
+    // Abrir janela de impressão
+    const win = window.open('', '_blank');
+    if (!win) { alert('Pop-up bloqueado! Permita pop-ups para este site.'); return; }
+    
+    win.document.write(`<html><head><title>Relatório de Validade</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+            @media print {
+                body { margin: 0; padding: 10px; }
+            }
+        </style>
+    </head><body>${html}<script>window.onload = () => { setTimeout(() => window.print(), 500); }<\/script></body></html>`);
+    win.document.close();
+};
     
     // EVENTOS
     buscarBtn.onclick = () => { const ean = codigoInput.value.trim(); if (ean) window.buscarProduto(ean); };
