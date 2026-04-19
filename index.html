@@ -5,55 +5,127 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Validade</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=72:wght@400;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        
-        <!-- SCANNER -->
-        <div class="card scanner">
-            <div class="card-header">
-                <h2>🔍 CONTROLE VALIDADE</h2>
-                <p>Escaneie o código de barras para consultar ou cadastrar</p>
-            </div>
-            
-            <div class="card-body">
-                <div class="campo-busca">
-                    <label for="codigo">📷 Código de Barras (EAN):</label>
-                    <input type="text" id="codigo" placeholder="Escaneie ou digite o código..." autofocus>
-                    <button id="buscarBtn" class="btn-buscar">🔍 Buscar</button>
-                </div>
-                
-                <div id="loading" class="loading" style="display: none;">
-                    ⏳ Buscando produto...
-                </div>
-                
-                <div id="resultado" class="resultado">
-                    <!-- Resultado aparece aqui -->
-                </div>
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="sap-logo">
+                <span class="logo-box">SAP</span>
+                <span class="logo-text">Controle de Validade</span>
             </div>
         </div>
-        
-        <!-- RELATÓRIO -->
-        <div class="card relatorio">
-            <div class="card-header">
-                <h2>📊 RELATÓRIO MENSAL</h2>
-                <p>Clique no botão abaixo para gerar o relatório com TODOS os produtos</p>
-            </div>
-            
-            <div class="card-body">
-                <div class="botoes-relatorio">
-                    <button id="gerarRelatorioBtn" class="btn-relatorio">📄 Gerar Relatório</button>
-                    <button id="imprimirRemoverBtn" class="btn-imprimir-remover">🖨️ Imprimir e Remover Vencidos</button>
-                </div>
-                
-                <div id="relatorio" class="relatorio">
-                    <!-- Relatório aparece aqui -->
-                </div>
-            </div>
+        <div class="topbar-right">
+            <span class="topbar-date" id="topbarDate"></span>
+            <span class="topbar-user">🏪 Operador</span>
         </div>
-        
+    </header>
+
+    <div class="shell">
+
+        <!-- SIDEBAR -->
+        <nav class="sidebar">
+            <ul>
+                <li class="nav-item active" data-section="scanner">
+                    <span class="nav-icon">⬛</span>
+                    <span class="nav-label">Scanner</span>
+                </li>
+                <li class="nav-item" data-section="relatorio">
+                    <span class="nav-icon">▦</span>
+                    <span class="nav-label">Relatório</span>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="main">
+
+            <!-- SECTION: SCANNER -->
+            <section id="section-scanner" class="section active">
+
+                <div class="page-title">
+                    <h1>Scanner de Produtos</h1>
+                    <p class="page-subtitle">Escaneie o código de barras para consultar ou cadastrar</p>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">📷</span>
+                        <span>Leitura de Código de Barras (EAN)</span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="campo-busca">
+                            <div class="input-group">
+                                <label for="codigo">Código EAN</label>
+                                <div class="input-row">
+                                    <input type="text" id="codigo" placeholder="Escaneie ou digite o código..." autofocus autocomplete="off">
+                                    <button id="buscarBtn" class="btn btn-primary">
+                                        <span class="btn-icon">🔍</span> Buscar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="loading" class="loading-bar" style="display:none;">
+                            <div class="loading-spinner"></div>
+                            <span>Buscando produto no banco de dados...</span>
+                        </div>
+
+                        <div id="resultado" class="resultado"></div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- SECTION: RELATÓRIO -->
+            <section id="section-relatorio" class="section">
+
+                <div class="page-title">
+                    <h1>Relatório Mensal</h1>
+                    <p class="page-subtitle">Visão geral de todos os produtos cadastrados</p>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">📊</span>
+                        <span>Painel de Controle</span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="botoes-relatorio">
+                            <button id="gerarRelatorioBtn" class="btn btn-success">
+                                <span class="btn-icon">📄</span> Gerar Relatório
+                            </button>
+                            <button id="imprimirRemoverBtn" class="btn btn-warning">
+                                <span class="btn-icon">🖨️</span> Imprimir e Remover Vencidos
+                            </button>
+                        </div>
+                        <div id="relatorio" class="relatorio"></div>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
     </div>
-    
+
     <script src="script.js"></script>
+    <script>
+        // Sidebar navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                item.classList.add('active');
+                document.getElementById('section-' + item.dataset.section).classList.add('active');
+            });
+        });
+
+        // Topbar date
+        const d = new Date();
+        document.getElementById('topbarDate').textContent = d.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
+    </script>
 </body>
 </html>
