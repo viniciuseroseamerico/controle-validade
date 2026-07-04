@@ -1,5 +1,5 @@
 /* ============================================= */
-/* ESTILOS GERAIS                                */
+/* ESTILOS GERAIS - TEMA ESCURO                  */
 /* ============================================= */
 
 * {
@@ -10,9 +10,10 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    background: linear-gradient(135deg, #0f1c33 0%, #14233f 100%);
     min-height: 100vh;
     padding: 20px;
+    color: #f2f5fa;
 }
 
 .container {
@@ -21,13 +22,14 @@ body {
 }
 
 /* ============================================= */
-/* CARDS (CAIXAS BRANCAS)                        */
+/* CARDS                                         */
 /* ============================================= */
 
 .card {
-    background: white;
+    background: #16233f;
+    border: 1px solid #2a3f66;
     border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     margin-bottom: 25px;
     overflow: hidden;
 }
@@ -41,15 +43,19 @@ body {
 .card-header h2 {
     font-size: 1.5rem;
     margin-bottom: 5px;
+    color: #ffffff;
 }
 
 .card-header p {
     font-size: 0.9rem;
     opacity: 0.9;
+    color: #e6ecf5;
 }
 
 .card-body {
     padding: 25px;
+    background: #16233f;
+    color: #f2f5fa;
 }
 
 /* ============================================= */
@@ -66,7 +72,7 @@ body {
 
 .campo-busca label {
     font-weight: bold;
-    color: #333;
+    color: #f2f5fa;
     font-size: 1.1rem;
 }
 
@@ -74,15 +80,21 @@ body {
     flex: 1;
     padding: 16px 18px;
     font-size: 1.2rem;
-    border: 2px solid #ddd;
+    background: #0d1b2e;
+    color: #ffffff;
+    border: 2px solid #3a5a8c;
     border-radius: 8px;
     outline: none;
     transition: border-color 0.3s;
     font-family: monospace;
 }
 
+.campo-busca input::placeholder {
+    color: #8ea3bf;
+}
+
 .campo-busca input:focus {
-    border-color: #1e3c72;
+    border-color: #4f86d6;
 }
 
 .btn-buscar {
@@ -108,54 +120,73 @@ body {
 .resultado {
     margin-top: 20px;
     padding: 20px;
-    background: #f8f9fa;
+    background: #12203a;
+    color: #f2f5fa;
     border-radius: 12px;
-    border-left: 4px solid #1e3c72;
+    border-left: 4px solid #4f86d6;
 }
 
 .resultado h3 {
-    color: #333;
+    color: #ffffff;
     margin-bottom: 15px;
     font-size: 1.2rem;
 }
 
+.resultado h4 {
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
 .resultado p {
     margin: 8px 0;
-    color: #555;
+    color: #e6ecf5;
+}
+
+/* Cada lote/produto encontrado (gerado via JS, sem classe própria) */
+#resultado > div {
+    background: #1b2f4e !important;
+    color: #f2f5fa !important;
+    border-radius: 8px;
+}
+
+#resultado > div p,
+#resultado > div strong {
+    color: #f2f5fa !important;
 }
 
 .resultado .produto-info {
-    background: white;
+    background: #1b2f4e;
     padding: 15px;
     border-radius: 8px;
     margin-top: 10px;
     border-left: 4px solid;
+    color: #f2f5fa;
 }
 
-/* Cores para cada tipo de ação */
+/* Cores para cada tipo de ação (borda lateral) */
 .produto-info[data-acao="retirar"] {
-    border-left-color: #e53e3e;
-    background: #fff5f5;
+    border-left-color: #ff6b6b;
+    background: #2a1414;
 }
 
 .produto-info[data-acao="30"] {
-    border-left-color: #ed8936;
-    background: #fffaf0;
+    border-left-color: #ffa552;
+    background: #2a1e0e;
 }
 
 .produto-info[data-acao="20"] {
-    border-left-color: #ecc94b;
-    background: #fffff0;
+    border-left-color: #ffe066;
+    background: #2a2610;
 }
 
 .produto-info[data-acao="normal"] {
-    border-left-color: #48bb78;
-    background: #f0fff4;
+    border-left-color: #5ee6a0;
+    background: #10241a;
 }
 
 /* Mensagem de produto não encontrado */
 .resultado .nao-encontrado {
-    color: #e53e3e;
+    color: #ff8080;
     font-weight: bold;
     text-align: center;
     padding: 20px;
@@ -166,11 +197,11 @@ body {
 .form-cadastro {
     margin-top: 20px;
     padding-top: 20px;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid #2a3f66;
 }
 
 .form-cadastro h4 {
-    color: #333;
+    color: #ffffff;
     margin-bottom: 15px;
 }
 
@@ -178,18 +209,24 @@ body {
     width: 100%;
     padding: 12px;
     margin-bottom: 12px;
-    border: 1px solid #ddd;
+    background: #0d1b2e;
+    color: #ffffff;
+    border: 1px solid #3a5a8c;
     border-radius: 6px;
     font-size: 1rem;
 }
 
+.form-cadastro input::placeholder {
+    color: #8ea3bf;
+}
+
 .form-cadastro input:focus {
     outline: none;
-    border-color: #1e3c72;
+    border-color: #4f86d6;
 }
 
 .btn-salvar {
-    background: #48bb78;
+    background: #38a169;
     color: white;
     border: none;
     padding: 12px 20px;
@@ -201,14 +238,14 @@ body {
 }
 
 .btn-salvar:hover {
-    background: #38a169;
+    background: #2f855a;
 }
 
 /* Loading */
 .loading {
     text-align: center;
     padding: 20px;
-    color: #1e3c72;
+    color: #7fb2ff;
     font-weight: bold;
 }
 
@@ -224,7 +261,7 @@ body {
 }
 
 .btn-relatorio {
-    background: #48bb78;
+    background: #38a169;
     color: white;
     border: none;
     padding: 14px 28px;
@@ -236,11 +273,11 @@ body {
 }
 
 .btn-relatorio:hover {
-    background: #38a169;
+    background: #2f855a;
 }
 
 .btn-imprimir-remover {
-    background: #ed8936;
+    background: #dd6b20;
     color: white;
     border: none;
     padding: 14px 28px;
@@ -252,13 +289,14 @@ body {
 }
 
 .btn-imprimir-remover:hover {
-    background: #dd6b20;
+    background: #c05621;
 }
 
 .relatorio {
     margin-top: 20px;
     padding: 20px;
-    background: #f8f9fa;
+    background: #12203a;
+    color: #f2f5fa;
     border-radius: 12px;
     display: none;
 }
@@ -267,7 +305,34 @@ body {
     display: block;
 }
 
-/* Tabela do relatório */
+.relatorio h2, .relatorio h3 {
+    color: #ffffff;
+}
+
+.relatorio p {
+    color: #e6ecf5;
+}
+
+.relatorio hr {
+    border-color: #2a3f66;
+}
+
+/* Tabelas geradas dinamicamente dentro do relatório */
+.relatorio table {
+    background: #1b2f4e;
+    border-color: #3a5a8c !important;
+}
+
+.relatorio td {
+    color: #f2f5fa !important;
+    border-color: #3a5a8c !important;
+    background: #1b2f4e;
+}
+
+.relatorio th {
+    color: #ffffff !important;
+}
+
 .tabela-relatorio {
     width: 100%;
     border-collapse: collapse;
@@ -283,24 +348,14 @@ body {
 
 .tabela-relatorio td {
     padding: 10px 12px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #2a3f66;
 }
 
 .tabela-relatorio tr:hover {
-    background: #f0f0f0;
+    background: #223b5e;
 }
 
 /* Seções do relatório */
-.secao-relatorio {
-    margin-bottom: 30px;
-}
-
-.secao-relatorio h3 {
-    padding: 10px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-}
-
 .secao-vencidos h3 {
     background: #c53030;
     color: white;
@@ -324,19 +379,7 @@ body {
     border-radius: 8px;
     margin-bottom: 15px;
 }
-/* Estilo para o gráfico de pizza */
-.grafico-pizza {
-    background: white;
-    padding: 15px;
-    border-radius: 12px;
-    margin: 20px auto;
-}
 
-.grafico-pizza div[style*="conic-gradient"] {
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-/* Seção normal */
 .secao-normal h3 {
     background: #48bb78;
     color: white;
@@ -345,38 +388,44 @@ body {
     border-radius: 8px;
 }
 
-/* Cores da tabela para melhor contraste */
-.tabela-relatorio th {
-    background: #1e3c72;
-    color: white;
-    padding: 12px;
-    text-align: left;
-}
-
-/* Destaque para linhas de vencidos */
+/* Destaque para linhas por categoria (mantém contraste no fundo escuro) */
 .secao-vencidos .tabela-relatorio tr {
-    background: #fff5f5;
+    background: #2a1414;
 }
 
 .secao-30 .tabela-relatorio tr {
-    background: #fffaf0;
+    background: #2a1e0e;
 }
 
 .secao-20 .tabela-relatorio tr {
-    background: #fffff0;
+    background: #2a2610;
 }
 
 /* Totais do relatório */
 .totais-relatorio {
     margin-top: 20px;
     padding: 15px;
-    background: white;
+    background: #1b2f4e;
     border-radius: 8px;
-    border: 1px solid #ddd;
+    border: 1px solid #3a5a8c;
+    color: #f2f5fa;
 }
 
 .totais-relatorio p {
     margin: 5px 0;
+}
+
+/* Gráfico de pizza */
+.grafico-pizza {
+    background: #1b2f4e;
+    padding: 15px;
+    border-radius: 12px;
+    margin: 20px auto;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.grafico-pizza div[style*="conic-gradient"] {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
 }
 
 /* ============================================= */
@@ -384,8 +433,8 @@ body {
 /* ============================================= */
 
 .mensagem-sucesso {
-    background: #c6f6d5;
-    color: #22543d;
+    background: #16382a;
+    color: #b7f0cd;
     padding: 12px;
     border-radius: 8px;
     margin-top: 10px;
@@ -393,115 +442,12 @@ body {
 }
 
 .mensagem-erro {
-    background: #fed7d7;
-    color: #742a2a;
+    background: #3a1a1a;
+    color: #ffc2c2;
     padding: 12px;
     border-radius: 8px;
     margin-top: 10px;
     border-left: 4px solid #e53e3e;
-}
-
-/* ============================================= */
-/* RESPONSIVIDADE                                */
-/* ============================================= */
-
-@media (max-width: 600px) {
-    body {
-        padding: 10px;
-    }
-    
-    .card-body {
-        padding: 15px;
-    }
-    
-    .campo-busca {
-        flex-direction: column;
-    }
-    
-    .campo-busca input {
-        width: 100%;
-    }
-    
-    .btn-buscar {
-        width: 100%;
-    }
-    
-    .botoes-relatorio {
-        flex-direction: column;
-    }
-    
-    .btn-relatorio, .btn-imprimir-remover {
-        width: 100%;
-    }
-    
-    .tabela-relatorio {
-        font-size: 0.8rem;
-    }
-    
-    .tabela-relatorio th,
-    .tabela-relatorio td {
-        padding: 6px 8px;
-    }
-}
-/* ============================================= */
-/* CORREÇÃO - GARANTIR QUE BOTÕES APAREÇAM      */
-/* ============================================= */
-
-.botoes-relatorio {
-    display: flex !important;
-    gap: 15px !important;
-    margin-bottom: 20px !important;
-    flex-wrap: wrap !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-.btn-relatorio {
-    background: #48bb78 !important;
-    color: white !important;
-    border: none !important;
-    padding: 14px 28px !important;
-    font-size: 1rem !important;
-    border-radius: 8px !important;
-    cursor: pointer !important;
-    font-weight: bold !important;
-    display: inline-block !important;
-    visibility: visible !important;
-}
-
-.btn-imprimir-remover {
-    background: #ed8936 !important;
-    color: white !important;
-    border: none !important;
-    padding: 14px 28px !important;
-    font-size: 1rem !important;
-    border-radius: 8px !important;
-    cursor: pointer !important;
-    font-weight: bold !important;
-    display: inline-block !important;
-    visibility: visible !important;
-}
-
-/* Garantir que o card do relatório aparece */
-.card.relatorio {
-    display: block !important;
-    visibility: visible !important;
-}
-
-.card-body {
-    display: block !important;
-    visibility: visible !important;
-}
-/* Gráfico de pizza */
-.grafico-pizza {
-    background: white;
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.grafico-pizza div[style*="conic-gradient"] {
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 /* ============================================= */
@@ -517,9 +463,10 @@ body {
 }
 
 .login-card {
-    background: white;
+    background: #16233f;
+    border: 1px solid #2a3f66;
     border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     padding: 40px 35px;
     width: 100%;
     max-width: 360px;
@@ -527,12 +474,12 @@ body {
 }
 
 .login-card h2 {
-    color: #1e3c72;
+    color: #ffffff;
     margin-bottom: 8px;
 }
 
 .login-card p {
-    color: #666;
+    color: #b7c5d9;
     margin-bottom: 25px;
 }
 
@@ -540,15 +487,21 @@ body {
     width: 100%;
     padding: 14px;
     margin-bottom: 14px;
-    border: 2px solid #ddd;
+    background: #0d1b2e;
+    color: #ffffff;
+    border: 2px solid #3a5a8c;
     border-radius: 8px;
     font-size: 1rem;
     outline: none;
     transition: border-color 0.3s;
 }
 
+.login-card input::placeholder {
+    color: #8ea3bf;
+}
+
 .login-card input:focus {
-    border-color: #1e3c72;
+    border-color: #4f86d6;
 }
 
 .btn-login {
@@ -574,7 +527,7 @@ body {
 }
 
 .login-erro {
-    color: #e53e3e;
+    color: #ff8080;
     margin-top: 12px;
     font-weight: bold;
     min-height: 20px;
@@ -588,13 +541,14 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: white;
+    background: #16233f;
+    border: 1px solid #2a3f66;
     padding: 12px 20px;
     border-radius: 12px;
     margin-bottom: 15px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     font-weight: bold;
-    color: #1e3c72;
+    color: #ffffff;
 }
 
 .btn-logout {
@@ -612,10 +566,84 @@ body {
     background: #c53030;
 }
 
+/* ============================================= */
+/* RESPONSIVIDADE                                */
+/* ============================================= */
+
 @media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    .card-body {
+        padding: 15px;
+    }
+
+    .campo-busca {
+        flex-direction: column;
+    }
+
+    .campo-busca input {
+        width: 100%;
+    }
+
+    .btn-buscar {
+        width: 100%;
+    }
+
+    .botoes-relatorio {
+        flex-direction: column;
+    }
+
+    .btn-relatorio, .btn-imprimir-remover {
+        width: 100%;
+    }
+
+    .tabela-relatorio {
+        font-size: 0.8rem;
+    }
+
+    .tabela-relatorio th,
+    .tabela-relatorio td {
+        padding: 6px 8px;
+    }
+
     .topo-usuario {
         flex-direction: column;
         gap: 10px;
         text-align: center;
     }
+}
+
+/* ============================================= */
+/* GARANTIR VISIBILIDADE DOS BOTÕES E CARDS      */
+/* ============================================= */
+
+.botoes-relatorio {
+    display: flex !important;
+    gap: 15px !important;
+    margin-bottom: 20px !important;
+    flex-wrap: wrap !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.btn-relatorio {
+    display: inline-block !important;
+    visibility: visible !important;
+}
+
+.btn-imprimir-remover {
+    display: inline-block !important;
+    visibility: visible !important;
+}
+
+.card.relatorio {
+    display: block !important;
+    visibility: visible !important;
+}
+
+.card-body {
+    display: block !important;
+    visibility: visible !important;
 }
