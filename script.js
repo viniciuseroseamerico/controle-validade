@@ -204,6 +204,7 @@ async function adicionarValidade(ean, desc, validadeBR) {
 // RELATÓRIO (sempre filtrado pela loja logada)
 // ============================================
 async function gerarRelatorio() {
+    relatorioDiv.classList.add('ativo');
     relatorioDiv.innerHTML = '<div class="loading">⏳ Gerando...</div>';
     const response = await fetch(`${SUPABASE_URL}/rest/v1/produtos_validade?loja_id=eq.${lojaId}&select=*`, {
         headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
@@ -212,8 +213,38 @@ async function gerarRelatorio() {
     const vencidos = produtos.filter(p => calcularDiasRestantes(p.validade) < 0);
     const p30 = produtos.filter(p => { const d = calcularDiasRestantes(p.validade); return d > 0 && d <= 60; });
     const p20 = produtos.filter(p => { const d = calcularDiasRestantes(p.validade); return d > 60 && d <= 90; });
+    const normal = produtos.length - vencidos.length - p30.length - p20.length;
 
     let html = `<h2>📊 RELATÓRIO — ${lojaNome}</h2><p>Total: ${produtos.length}</p><hr>`;
+
+    // GRÁFICO DE PIZZA
+    if (produtos.length > 0) {
+        const total = produtos.length;
+        const pctVencidos = (vencidos.length / total) * 100;
+        const pctP30 = (p30.length / total) * 100;
+        const pctP20 = (p20.length / total) * 100;
+        const pctNormal = (normal / total) * 100;
+        let acumulado = 0;
+        const fatias = [];
+        [['#e53e3e', pctVencidos], ['#ed8936', pctP30], ['#ecc94b', pctP20], ['#48bb78', pctNormal]].forEach(([cor, pct]) => {
+            if (pct > 0) {
+                const inicio = acumulado;
+                acumulado += pct;
+                fatias.push(`${cor} ${inicio}% ${acumulado}%`);
+            }
+        });
+        html += `<div class="grafico-pizza" style="text-align:center; margin-bottom:25px;">
+            <h3 style="margin-bottom:15px;">📊 Distribuição por Status</h3>
+            <div style="width:220px; height:220px; border-radius:50%; margin:0 auto; background:conic-gradient(${fatias.join(', ')});"></div>
+            <div style="margin-top:15px; display:flex; flex-wrap:wrap; gap:14px; justify-content:center; font-size:0.9rem;">
+                <span>🔴 Vencidos: ${vencidos.length}</span>
+                <span>🟠 30% OFF: ${p30.length}</span>
+                <span>🟡 20% OFF: ${p20.length}</span>
+                <span>✅ Normal: ${normal}</span>
+            </div>
+        </div><hr>`;
+    }
+
     html += `<h3 style="background:#c53030;color:white;padding:10px;">🔴 VENCIDOS</h3>`;
     if (vencidos.length) {
         html += `<table border="1" style="width:100%"><tr style="background:#1e3c72;color:white"><th>EAN</th><th>Descrição</th><th>Validade</th><th>Dias</th></tr>`;
