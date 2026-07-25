@@ -173,16 +173,26 @@ async function cadastrarProduto(ean, desc, validadeBR) {
     if (partes.length !== 3) return alert('Data inválida');
     const validadeISO = `${partes[2]}-${partes[1]}-${partes[0]}`;
     loadingDiv.style.display = 'block';
-    await fetch(`${SUPABASE_URL}/rest/v1/produtos_validade`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` },
-        body: JSON.stringify({ eam: ean, descricao: desc, validade: validadeISO, loja_id: lojaId })
-    });
-    loadingDiv.style.display = 'none';
-    alert('Cadastrado!');
-    codigoInput.value = '';
-    codigoInput.focus();
-    resultadoDiv.innerHTML = '';
+    try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/produtos_validade`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` },
+            body: JSON.stringify({ eam: ean, descricao: desc, validade: validadeISO, loja_id: lojaId })
+        });
+        loadingDiv.style.display = 'none';
+        if (!response.ok) {
+            const detalhe = await response.text().catch(() => '');
+            alert('❌ NÃO FOI SALVO! Erro do servidor: ' + response.status + '\n' + detalhe + '\n\nTente cadastrar novamente.');
+            return;
+        }
+        alert('✅ Cadastrado com sucesso!');
+        codigoInput.value = '';
+        codigoInput.focus();
+        resultadoDiv.innerHTML = '';
+    } catch (e) {
+        loadingDiv.style.display = 'none';
+        alert('❌ NÃO FOI SALVO! Erro de conexão: ' + e.message + '\n\nTente cadastrar novamente.');
+    }
 }
 
 async function adicionarValidade(ean, desc, validadeBR) {
@@ -190,14 +200,24 @@ async function adicionarValidade(ean, desc, validadeBR) {
     if (partes.length !== 3) return alert('Data inválida');
     const validadeISO = `${partes[2]}-${partes[1]}-${partes[0]}`;
     loadingDiv.style.display = 'block';
-    await fetch(`${SUPABASE_URL}/rest/v1/produtos_validade`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` },
-        body: JSON.stringify({ eam: ean, descricao: desc, validade: validadeISO, loja_id: lojaId })
-    });
-    loadingDiv.style.display = 'none';
-    alert('Validade adicionada!');
-    buscarProduto(ean);
+    try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/produtos_validade`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` },
+            body: JSON.stringify({ eam: ean, descricao: desc, validade: validadeISO, loja_id: lojaId })
+        });
+        loadingDiv.style.display = 'none';
+        if (!response.ok) {
+            const detalhe = await response.text().catch(() => '');
+            alert('❌ NÃO FOI SALVO! Erro do servidor: ' + response.status + '\n' + detalhe + '\n\nTente novamente.');
+            return;
+        }
+        alert('✅ Validade adicionada com sucesso!');
+        buscarProduto(ean);
+    } catch (e) {
+        loadingDiv.style.display = 'none';
+        alert('❌ NÃO FOI SALVO! Erro de conexão: ' + e.message + '\n\nTente novamente.');
+    }
 }
 
 // ============================================
